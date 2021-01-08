@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class MapHome extends StatefulWidget {
   @override
@@ -17,30 +17,6 @@ class _MapState extends State<MapHome> {
   double lat = 0.0;
   double long = 0.0;
   Completer<GoogleMapController> _controller = Completer();
-
-  Future getData() async {
-    String url = 'https://parkingprojectgp.herokuapp.com/api/garages';
-    var response = await http.get(url);
-    var responseBody = jsonDecode(response.body);
-
-    for (int i = 0; i < responseBody['data'].length; i++) {
-      _allMarkers.add(
-        Marker(
-            markerId: MarkerId('$i'),
-            position: LatLng(double.parse(responseBody['data'][i]['lat']),
-                double.parse(responseBody['data'][i]['long']))),
-      );
-    }
-    setState(() {});
-    return responseBody;
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getData();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +52,34 @@ class _MapState extends State<MapHome> {
     );
   }
 
+  Future getData() async {
+    String url = 'https://parkingprojectgp.herokuapp.com/api/garages';
+    var response = await http.get(url);
+    var responseBody = jsonDecode(response.body);
+
+    for (int i = 0; i < responseBody['data'].length; i++) {
+      _allMarkers.add(
+        Marker(
+            markerId: MarkerId('$i'),
+            position: LatLng(double.parse(responseBody['data'][i]['lat']),
+                double.parse(responseBody['data'][i]['long']))),
+      );
+    }
+    if (!mounted) return;
+    setState(() {});
+    return responseBody;
+  }
+
   Future<void> goToYourLocation() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(lat, long), zoom: 18)));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
   }
 }

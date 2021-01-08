@@ -1,10 +1,18 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hive/hive.dart';
 
+part 'user_model.g.dart';
+@HiveType(typeId : 1)
 class Client {
+  @HiveField(0)
   String id;
+  @HiveField(1)
   String phone;
+  @HiveField(2)
   String firstName;
+  @HiveField(3)
   String lastName;
+  @HiveField(4)
   bool isOwner = false;
 
   Client({
@@ -29,7 +37,7 @@ class Client {
       'phone': this.phone,
       'first_name': this.firstName,
       'last_name': this.lastName,
-      'is_owner': this.isOwner?1:0,
+      'is_owner': this.isOwner?"1":"0",
     };
   }
 

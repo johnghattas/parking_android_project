@@ -50,84 +50,83 @@ class _RegisterIndexState extends State<RegisterIndex> {
 
     print(SizeConfig.bottom);
 
-    return Provider<ChangeVerificationState>(
-      create:(context) => ChangeVerificationState(),
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        resizeToAvoidBottomPadding: true,
-        extendBody: true,
-        appBar: ConstantWidget.appBarGreen,
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Container(
-            height: SizeConfig.height,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              primary: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: SizeConfig.orientation == Orientation.portrait
-                        ? getProportionateScreenWidth(240)
-                        : getHeightWhenOrientationLand(235, 220),
-                    width: SizeConfig.width,
-                    child: TextAndCustomPaint(
-                      title: 'Back',
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomPadding: true,
+      extendBody: true,
+      appBar: ConstantWidget.appBarGreen,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          height: SizeConfig.height,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            primary: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: SizeConfig.orientation == Orientation.portrait
+                      ? getProportionateScreenWidth(240)
+                      : getHeightWhenOrientationLand(235, 220),
+                  width: SizeConfig.width,
+                  child: TextAndCustomPaint(
+                    title: 'Back',
+                  ),
+                ),
+                VerticalSpacing(of: 60),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        joinOurCompanyText(),
+                        HorizontalSpace(of: 35),
+                        //todo make text field
+                        CountryCodeFieldHint(
+                          onChangedCountry: (value) async {
+                            _code = value.dialCode;
+                            _fieldPhoneValidate.countryCode = value.code;
+                            _isValid = await checkNumberFromCode(_phoneNumber,
+                                _fieldPhoneValidate, _scrollController);
+                            if(!mounted)
+                              return;
+                            setState(() {});
+                          },
+                          focusNode: _focusNode,
+                          initialCode: 'EG',
+                          onChange: (value) async {
+                            _phoneNumber = value;
+                            _isValid = await checkNumberFromCode(
+                                value, _fieldPhoneValidate, _scrollController);
+                            setState(() {});
+                          },
+                          onTap: () {
+                            scrollToBottom(_scrollController);
+                          },
+                        ),
+
+                        HorizontalSpace(of: 35),
+                        privacyTextWidget(),
+
+                        HorizontalSpace(of: 35),
+                        CustomContinueButton(
+                            title: 'Continue',
+                            isEnable: _isValid,
+                            onPressed: () {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) => OPTPage(phone: _phoneNumber, code: _code,)));
+                            }),
+
+                        VerticalSpacing(of: 30)
+                      ],
                     ),
                   ),
-                  VerticalSpacing(of: 60),
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          joinOurCompanyText(),
-                          HorizontalSpace(of: 35),
-                          //todo make text field
-                          CountryCodeFieldHint(
-                            onChangedCountry: (value) async {
-                              _code = value.dialCode;
-                              _fieldPhoneValidate.countryCode = value.code;
-                              _isValid = await checkNumberFromCode(_phoneNumber,
-                                  _fieldPhoneValidate, _scrollController);
-                              setState(() {});
-                            },
-                            focusNode: _focusNode,
-                            initialCode: 'EG',
-                            onChange: (value) async {
-                              _phoneNumber = value;
-                              _isValid = await checkNumberFromCode(
-                                  value, _fieldPhoneValidate, _scrollController);
-                              setState(() {});
-                            },
-                            onTap: () {
-                              scrollToBottom(_scrollController);
-                            },
-                          ),
-
-                          HorizontalSpace(of: 35),
-                          privacyTextWidget(),
-
-                          HorizontalSpace(of: 35),
-                          CustomContinueButton(
-                              title: 'Continue',
-                              isEnable: _isValid,
-                              onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (_) => OPTPage(phone: _phoneNumber, code: _code,)));
-                              }),
-
-                          VerticalSpacing(of: 30)
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ),

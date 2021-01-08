@@ -6,6 +6,7 @@ class ChangeVerificationState extends ChangeNotifier {
 
   VerificationState status = VerificationState.NONE_VERIFIED;
   String verificationId;
+  String error;
 
   int lastIndex = 6;
   List<int> digits = List(6);
@@ -36,5 +37,12 @@ class ChangeVerificationState extends ChangeNotifier {
 
       notifyListeners();
     }
+  }
+
+  setError(String message) {
+    this.error = message;
+    this.status = VerificationState.NONE_VERIFIED;
+
+    notifyListeners();
   }
 }

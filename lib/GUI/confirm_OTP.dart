@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:parking_project/GUI/informatio_sign_up.dart';
+import 'package:provider/provider.dart';
 
 import '../block/keyboard_change.dart';
 import '../providers/change_verification_state.dart';
@@ -15,7 +15,7 @@ import '../widgets/phone_text_validation.dart';
 import '../widgets/register_floating_action_button.dart';
 import '../widgets/text_custom_paint.dart';
 import '../widgets/text_with_keyboard_animation.dart';
-
+import 'package:parking_project/shared/alerts_class.dart';
 class OPTPage extends StatefulWidget {
   final String phone;
 
@@ -27,7 +27,7 @@ class OPTPage extends StatefulWidget {
   _OPTPageState createState() => _OPTPageState();
 }
 
-class _OPTPageState extends State<OPTPage> {
+class _OPTPageState extends State<OPTPage> with Alerts{
   final int digits = 6;
   final ScrollController _scrollController = ScrollController();
   double _position = 0;
@@ -90,7 +90,7 @@ class _OPTPageState extends State<OPTPage> {
         ),
       ),
       floatingActionButton: RegFAB(isSuccess: _isSuccess, onPressed: () {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => InformationSignUp(),));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => InformationSignUp(user: _phoneVerification.user),));
 
 
 
@@ -157,6 +157,12 @@ class _OPTPageState extends State<OPTPage> {
       case VerificationState.NONE_VERIFIED:
         print('none');
 
+        if(watch.error != null) {
+         Future.delayed(Duration.zero, () {
+           errorDialog(context, title: "Error", content: watch.error);
+           watch.error = null;
+         });
+        }
         setState(() {
           _isSuccess = false;
         });

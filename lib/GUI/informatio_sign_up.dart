@@ -1,18 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-
-
+import 'package:hive/hive.dart';
+import 'package:parking_project/GUI/mp_home.dart';
+import 'package:parking_project/models/user_model.dart';
+import 'package:parking_project/services/sign_in_app.dart';
+import 'package:parking_project/shared/alerts_class.dart';
+import 'package:parking_project/shared/handling_auth_error_mixin.dart';
 class InformationSignUp extends StatefulWidget {
+  final User user;
+
+  const InformationSignUp({Key key, this.user}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<InformationSignUp> {
+class _MyAppState extends State<InformationSignUp> with HandlingAuthErrors, Alerts{
   bool mark2 = true;
   bool mark = true;
 
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+
+  SignInServices _signInServices;
+
   Widget build(BuildContext context) {
+    handleException(context);
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
@@ -52,9 +69,8 @@ class _MyAppState extends State<InformationSignUp> {
                                 )
                               ],
                             ),
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
-
                             },
                           ),
                         ],
@@ -93,6 +109,7 @@ class _MyAppState extends State<InformationSignUp> {
                       padding: const EdgeInsets.only(
                           bottom: 4.0, left: 15.0, right: 15.0),
                       child: TextField(
+                        controller: _firstNameController,
                         cursorColor: Colors.green,
                         decoration: InputDecoration(
                           labelText: 'First Name',
@@ -112,6 +129,7 @@ class _MyAppState extends State<InformationSignUp> {
                       padding: const EdgeInsets.only(
                           bottom: 4.0, left: 15.0, right: 15.0),
                       child: TextField(
+                        controller: _lastNameController,
                         cursorColor: Colors.green,
                         decoration: InputDecoration(
                           labelText: 'Last Name',
@@ -167,6 +185,7 @@ class _MyAppState extends State<InformationSignUp> {
                       padding: const EdgeInsets.only(
                           bottom: 4.0, left: 15.0, right: 15.0),
                       child: TextField(
+                        controller: _passwordController,
                         obscureText: mark2,
                         cursorColor: Colors.green,
                         decoration: InputDecoration(
@@ -199,6 +218,7 @@ class _MyAppState extends State<InformationSignUp> {
                       padding: const EdgeInsets.only(
                           bottom: 4.0, left: 15.0, right: 15.0),
                       child: TextFormField(
+                        controller: _confirmPasswordController,
                         validator: (val) =>
                             val.length < 6 ? 'Password too short.' : null,
                         cursorColor: Colors.green,
@@ -230,33 +250,36 @@ class _MyAppState extends State<InformationSignUp> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Card(
-                        elevation: 20.0,
-                        margin: EdgeInsets.all(8.0),
-                        shadowColor: Colors.white70,
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(14.0),
-                              child: Text(
-                                'Create Account',
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[400],
+                      child: InkWell(
+                        onTap: () async => _signUp(),
+                        child: Card(
+                          elevation: 20.0,
+                          margin: EdgeInsets.all(8.0),
+                          shadowColor: Colors.white70,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(14.0),
+                                child: Text(
+                                  'Create Account',
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[400],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 120.0,
-                              ),
-                              child: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.grey[400],
-                              ),
-                            )
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 120.0,
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.grey[400],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -268,6 +291,60 @@ class _MyAppState extends State<InformationSignUp> {
         ),
       ),
     );
+  }
+
+  _signUp() async {
+    Client client = Client(
+      id: widget.user.uid,
+      phone: widget.user.phoneNumber,
+      isOwner: false,
+      lastName: _lastNameController.text,
+      firstName: _firstNameController.text
+    );
+    String token;
+
+    try {
+      token = await _signInServices.signUp(client: client, passwordMap: {'password': _passwordController.text});
+    } catch (e) {
+      // print(e);
+      throw e;
+    }
+
+    if(token == null)
+      return;
+
+    _addTokenInHive(token, client);
+    if(isLoadingShow) {
+      Navigator.pop(context);
+      isLoadingShow = false;
+    }
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MapHome(),
+        ), (route) => route.isFirst);
+
+  }
+
+  void _addTokenInHive(String token, Client client) async{
+    Box userBox = await Hive.openBox('user_data');
+    userBox.put('token', token);
+
+    print(token);
+
+    if(client != null) {
+      userBox.put('data', client);
+    }
+
+    print('DONE ENTER THE TOKEN');
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _signInServices = SignInServices(context);
   }
 }
 

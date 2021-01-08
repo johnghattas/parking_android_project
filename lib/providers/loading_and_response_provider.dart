@@ -2,8 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 enum LoadingErrorState { NONE, LOADING, DONE, ERROR, WORKING }
 
-class LoadingAndErrorProvider extends ChangeNotifier{
-
+class LoadingAndErrorProvider extends ChangeNotifier {
   LoadingErrorState state = LoadingErrorState.NONE;
 
   String error;
@@ -13,17 +12,21 @@ class LoadingAndErrorProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-
   setError(String message) {
     this.error = message;
     state = LoadingErrorState.ERROR;
     notifyListeners();
   }
 
+  setErrorWithoutNotify(String message,
+      [LoadingErrorState state = LoadingErrorState.ERROR]) {
+    this.error = message;
+    state = state;
+  }
+
   reset() {
-    error  = null;
+    error = null;
     state = LoadingErrorState.NONE;
     notifyListeners();
-
   }
 }

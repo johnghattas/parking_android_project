@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:parking_project/const_data.dart';
 import 'package:parking_project/models/user_model.dart';
-import 'package:provider/provider.dart';
 import 'package:parking_project/providers/loading_and_response_provider.dart';
+import 'package:provider/provider.dart';
 
 abstract class AuthServices {
+  Future getUser(String token);
+
   Future signIn({
    @required String phone,
    @required String password,
@@ -39,10 +41,34 @@ class SignInServices extends AuthServices{
   }
 
   @override
+  Future getUser(String token) async{
+    print('token' + token);
+
+    http.Response response = await _client.post('$cUrl/auth/me',headers: {
+      'accept': 'application/json',
+      'Authorization': 'Bearer $token'
+
+    });
+
+    Map map=_checkResponse(response);
+    print('get user map is'+ map.toString());
+
+    if ( map  != null) {
+
+      return Client.fromMap(map);
+    }
+
+    return null;
+  }
+
+
+  @override
   Future<String> signIn({String phone, String password, bool isOwner}) async{
     assert(phone != null && phone.isNotEmpty);
     assert(password != null && password.isNotEmpty);
     assert(isOwner != null);
+
+    _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.LOADING);
 
     http.Response response = await _client.post('$cUrl/auth/login', body:{
       'phone': phone,
@@ -51,11 +77,17 @@ class SignInServices extends AuthServices{
       'accept': 'application/json'
     });
 
+    _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.NONE);
 
     Map map=_checkResponse(response);
+    print(map);
+
     if ( map  != null) {
 
       return map['access_token'].toString();
+    }else{
+      // _context.read<LoadingAndErrorProvider>().setError(null);
+
     }
 
 
@@ -70,7 +102,7 @@ class SignInServices extends AuthServices{
     assert(token != null && token.isNotEmpty);
 
     http.Response response = await http.post('$cUrl/auth/logout', headers: {
-      'Authorization': token
+      'Authorization': 'Bearer $token'
     },);
 
     Map map = _checkResponse(response);
@@ -83,22 +115,28 @@ class SignInServices extends AuthServices{
     return null;
   }
 
-
   @override
-  Future signUp({Client client}) async{
+  Future signUp({@required Client client, @required Map passwordMap}) async{
 
     client.checkAsserts();
+    _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.LOADING);
 
-    http.Response response = await _client.post('$cUrl/register', body: client.toMap(),
+    http.Response response = await _client.post('$cUrl/register', body: client.toMap()..addAll(passwordMap),
     headers: {
       'accept': 'application/json'
     });
+    _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.NONE);
 
     Map map = _checkResponse(response);
+    print(map);
 
-    if (map != null) {
 
-      return map['access_token'].toString();
+    if(map.containsKey('message') && map['message'] == 'Server Error') {
+      _context.read<LoadingAndErrorProvider>().setError("The phone is already existed");
+
+    }if (map != null) {
+
+      return map['token'];
     }
 
     return null;
@@ -108,8 +146,6 @@ class SignInServices extends AuthServices{
     if(response.statusCode == 401) {
       print('un auth');
       _context.read<LoadingAndErrorProvider>().setError("un authentication");
-
-
       return null;
     }
 
@@ -118,11 +154,17 @@ class SignInServices extends AuthServices{
 
 
     if(map.containsKey('access_token')) {
+      _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.DONE);
+
+    }if(map.containsKey('token')) {
+      _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.DONE);
 
     }
 
     return map;
   }
+
+
 
 
 }

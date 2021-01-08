@@ -20,15 +20,34 @@ class PhoneVerification {
     _auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       timeout: Duration(seconds: 60),
-      verificationCompleted: (phoneAuthCredential) {
+      verificationCompleted: (phoneAuthCredential) async{
+        UserCredential credential;
+        try {
+          credential = await _auth.signInWithCredential(phoneAuthCredential);
+        } catch (e) {
+          print(e);
 
-        getCodeFromCredential(phoneAuthCredential);
-        changeStatus.setStatus(VerificationState.VERIFIED);
+
+          print('this error'+ e.runtimeType.toString());
+          changeStatus..setStatus(VerificationState.WRONG)..isFullDigit = false;
+          return null;
+
+        }
+
+        if (credential?.user != null) {
+          getCodeFromCredential(phoneAuthCredential);
+          changeStatus..verificationId = null..isFullDigit = false..setStatus(VerificationState.VERIFIED);
+        } else {
+          changeStatus.setStatus(VerificationState.NONE_VERIFIED);
+
+        }
 
       },
       verificationFailed: (error) {
 
-        changeStatus.setStatus(VerificationState.NONE_VERIFIED);
+        changeStatus.setError(error.message);
+
+        print('this ex');
 
         throw Exception(error);
 
@@ -38,6 +57,8 @@ class PhoneVerification {
         print('this is the verification id $verificationId');
 
         changeStatus..setStatus(VerificationState.VERIFYING)..verificationId = verificationId;
+
+        print('here');
 
       },
       codeAutoRetrievalTimeout: (verificationId) {},
@@ -56,17 +77,10 @@ class PhoneVerification {
     print(smsCode);
 
     AuthCredential credential;
+      credential = PhoneAuthProvider.credential(verificationId: changeVer.verificationId, smsCode: smsCode);
     UserCredential credential2;
 
-    try {
-      credential = PhoneAuthProvider.credential(verificationId: changeVer.verificationId, smsCode: smsCode);
-    credential2 = await _auth.signInWithCredential(credential);
-    } catch (e) {
-      print(e.runtimeType);
-      changeVer..setStatus(VerificationState.WRONG)..isFullDigit = false;
-      return null;
-    }
-
+    credential2 = await _makeUserSignIn(credential);
 
     if (credential2?.user != null) {
       changeVer..verificationId = null..isFullDigit = false..setStatus(VerificationState.VERIFIED);
@@ -92,5 +106,24 @@ class PhoneVerification {
       throw e;
     }
 
+  }
+
+
+  User get user => _auth.currentUser;
+
+  Future<UserCredential> _makeUserSignIn(AuthCredential authCredential) async{
+
+    var changeVer = context.read<ChangeVerificationState>();
+
+    UserCredential credential;
+    try {
+      credential = await _auth.signInWithCredential(authCredential);
+    } catch (e) {
+      print(e.runtimeType);
+      changeVer..setStatus(VerificationState.WRONG)..isFullDigit = false;
+      return null;
+    }
+
+    return credential;
   }
 }
