@@ -21,7 +21,8 @@ class AdminInformationSignUp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<AdminInformationSignUp> with HandlingAuthErrors, Alerts{
+class _MyAppState extends State<AdminInformationSignUp>
+    with HandlingAuthErrors, Alerts {
   bool mark2 = true;
   bool mark = true;
 
@@ -48,7 +49,9 @@ class _MyAppState extends State<AdminInformationSignUp> with HandlingAuthErrors,
               Container(
                 height: getProportionateScreenWidth(240),
                 width: SizeConfig.width,
-                child: TextAndCustomPaint(title: 'back',),
+                child: TextAndCustomPaint(
+                  title: 'back',
+                ),
               ),
               Positioned(
                 top: 70,
@@ -84,7 +87,7 @@ class _MyAppState extends State<AdminInformationSignUp> with HandlingAuthErrors,
                         controller: _firstNameController,
                         cursorColor: Colors.green,
                         decoration: InputDecoration(
-                          labelText: 'Owner firstname                    ',
+                          labelText: 'Owner firstname',
                           errorMaxLines: 1,
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.green),
@@ -115,7 +118,6 @@ class _MyAppState extends State<AdminInformationSignUp> with HandlingAuthErrors,
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 15.0,
@@ -251,26 +253,25 @@ class _MyAppState extends State<AdminInformationSignUp> with HandlingAuthErrors,
 
   _signUp() async {
     Client client = Client(
-      id: widget.user.uid,
-      phone: widget.user.phoneNumber,
-      isOwner: true,
-      lastName: _lastNameController.text,
-      firstName: _firstNameController.text
-    );
+        id: widget.user.uid,
+        phone: widget.user.phoneNumber,
+        isOwner: true,
+        lastName: _lastNameController.text,
+        firstName: _firstNameController.text);
     String token;
 
     try {
-      token = await _signInServices.signUp(client: client, passwordMap: {'password': _passwordController.text});
+      token = await _signInServices.signUp(
+          client: client, passwordMap: {'password': _passwordController.text});
     } catch (e) {
       // print(e);
       throw e;
     }
 
-    if(token == null)
-      return;
+    if (token == null) return;
 
     _addTokenInHive(token, client);
-    if(isLoadingShow) {
+    if (isLoadingShow) {
       Navigator.pop(context);
       isLoadingShow = false;
     }
@@ -278,22 +279,21 @@ class _MyAppState extends State<AdminInformationSignUp> with HandlingAuthErrors,
         context,
         MaterialPageRoute(
           builder: (context) => OwnerHomePage(),
-        ), (route) => route.isFirst);
-
+        ),
+        (route) => route.isFirst);
   }
 
-  void _addTokenInHive(String token, Client client) async{
+  void _addTokenInHive(String token, Client client) async {
     Box userBox = await Hive.openBox('user_data');
     userBox.put('token', token);
 
     print(token);
 
-    if(client != null) {
+    if (client != null) {
       userBox.put('data', client);
     }
 
     print('DONE ENTER THE TOKEN');
-
   }
 
   @override
