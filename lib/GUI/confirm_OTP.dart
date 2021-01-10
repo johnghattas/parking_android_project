@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:parking_project/GUI/informatio_sign_up.dart';
+import 'package:parking_project/GUI/information_sign_up.dart';
 import 'package:provider/provider.dart';
 
 import '../block/keyboard_change.dart';
@@ -16,6 +16,8 @@ import '../widgets/register_floating_action_button.dart';
 import '../widgets/text_custom_paint.dart';
 import '../widgets/text_with_keyboard_animation.dart';
 import 'package:parking_project/shared/alerts_class.dart';
+import 'package:parking_project/GUI/owner_information_sign_up.dart';
+
 class OPTPage extends StatefulWidget {
   final String phone;
 
@@ -62,6 +64,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
                   width: SizeConfig.width,
                   child: TextAndCustomPaint(
                     title: 'Back',
+                    suffix: _checkBoxWithText(),
                   ),
                 ),
                 Container(
@@ -90,7 +93,14 @@ class _OPTPageState extends State<OPTPage> with Alerts{
         ),
       ),
       floatingActionButton: RegFAB(isSuccess: _isSuccess, onPressed: () {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => InformationSignUp(user: _phoneVerification.user),));
+
+        if (context.read<ChangeVerificationState>().isAdmin) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminInformationSignUp(user: _phoneVerification.user),));
+
+        } else {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => InformationSignUp(user: _phoneVerification.user),));
+
+        }
 
 
 
@@ -183,5 +193,30 @@ class _OPTPageState extends State<OPTPage> with Alerts{
     return SizeConfig.orientation == Orientation.portrait
         ? getProportionateScreenWidth(240)
         : getHeightWhenOrientationLand(235, 220);
+  }
+
+  _checkBoxWithText() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: <Widget>[
+          Checkbox(
+            value: context.watch<ChangeVerificationState>().isAdmin,
+            onChanged: (value) => context.read<ChangeVerificationState>().changeAdmin(value),
+          ),
+          Text(
+            'owner sign up',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              color: const Color(0xffffffff),
+              letterSpacing: 0.91,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ],
+      ),
+    );
   }
 }

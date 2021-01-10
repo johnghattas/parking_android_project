@@ -113,7 +113,7 @@ class PhoneVerification {
 
   Future<UserCredential> _makeUserSignIn(AuthCredential authCredential) async{
 
-    var changeVer = context.read<ChangeVerificationState>();
+    var changeVer = context.watch<ChangeVerificationState>();
 
     UserCredential credential;
     try {

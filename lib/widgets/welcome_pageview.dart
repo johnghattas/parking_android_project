@@ -1,16 +1,15 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
 import '../customs/custom_paint.dart';
 import '../providers/change_index_provider.dart';
 import '../shared/screen_sized.dart';
+
 class StackPageView extends StatefulWidget {
-  const StackPageView({
-    Key key
-  }) : super(key: key);
+  const StackPageView({Key key}) : super(key: key);
 
   @override
   _StackPageViewState createState() => _StackPageViewState();
@@ -35,21 +34,22 @@ class _StackPageViewState extends State<StackPageView> {
         } else if (_position <= SizeConfig.width * 2 + 10) {
           _position = getValue(
               _position, SizeConfig.width, SizeConfig.width * 2, -80, -900);
-        }else {
+        } else {
           _position = getValue(
               _position, SizeConfig.width, SizeConfig.width * 2, -80, -900);
-
         }
       });
     });
 
-
     _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-        ChangeIndex changeIndex = Provider.of<ChangeIndex>(context, listen: false);
-      if(!(changeIndex.isStopped?? false)) {
+      ChangeIndex changeIndex =
+          Provider.of<ChangeIndex>(context, listen: false);
+      if (!(changeIndex.isStopped ?? false)) {
         //print('this running');
-        _pageController.animateToPage(++changeIndex.pageIndex == 3? 0 : changeIndex.pageIndex, duration: Duration(milliseconds: 250), curve: Curves.easeIn);
-
+        _pageController.animateToPage(
+            ++changeIndex.pageIndex == 3 ? 0 : changeIndex.pageIndex,
+            duration: Duration(milliseconds: 250),
+            curve: Curves.easeIn);
       }
     });
   }
@@ -88,7 +88,7 @@ class _StackPageViewState extends State<StackPageView> {
                 children: [
                   ...List.generate(
                     3,
-                        (index) => Container(),
+                    (index) => Container(),
                   )
                 ],
                 onPageChanged: (v) {
@@ -115,13 +115,11 @@ class _StackPageViewState extends State<StackPageView> {
     print('this deactived');
 
     _timer.cancel();
-
   }
 
   @override
   void deactivate() {
     print('this de');
     super.deactivate();
-
   }
 }

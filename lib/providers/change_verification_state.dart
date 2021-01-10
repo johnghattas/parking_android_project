@@ -12,10 +12,17 @@ class ChangeVerificationState extends ChangeNotifier {
   List<int> digits = List(6);
 
   bool isFullDigit = false;
+  bool isAdmin = false;
 
   setStatus(VerificationState state) {
     this.status = state;
     notifyListeners();
+  }
+
+  changeAdmin(bool isAdmin){
+    this.isAdmin = isAdmin;
+    notifyListeners();
+
   }
 
 

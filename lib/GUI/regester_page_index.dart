@@ -67,16 +67,44 @@ class _RegisterIndexState extends State<RegisterIndex> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: SizeConfig.orientation == Orientation.portrait
-                      ? getProportionateScreenWidth(240)
-                      : getHeightWhenOrientationLand(235, 220),
-                  width: SizeConfig.width,
-                  child: TextAndCustomPaint(
-                    title: 'Back',
-                  ),
+                Stack(
+                  children: [
+                    Container(
+                      height: SizeConfig.orientation == Orientation.portrait
+                          ? getProportionateScreenWidth(240)
+                          : getHeightWhenOrientationLand(235, 220),
+                      width: SizeConfig.width,
+                      child: TextAndCustomPaint(
+                        title: 'Back',
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -10,
+                      right: 0,
+                      left: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Checkbox(
+                            onChanged: (value) => context.read<ChangeVerificationState>().changeAdmin(value),
+                            value: context.watch<ChangeVerificationState>().isAdmin,
+                          ),
+                          Text(
+                            'Sign up like owner',
+                            style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                letterSpacing: 0.65),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                VerticalSpacing(of: 60),
+                VerticalSpacing(of: 40),
                 Container(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),

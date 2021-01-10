@@ -4,9 +4,10 @@ import '../customs/custom_shape.dart';
 
 class TextAndCustomPaint extends StatelessWidget {
   final String title;
+  final Widget suffix;
 
   const TextAndCustomPaint({
-    Key key, this.title = 'WELCOME',
+    Key key, this.title = 'WELCOME', this.suffix,
   }) : super(key: key);
 
   @override
@@ -52,7 +53,8 @@ class TextAndCustomPaint extends StatelessWidget {
                   ),
                 ),
               ),
-              Spacer()
+              Spacer(),
+              suffix??Container()
             ],
           ),
         ),

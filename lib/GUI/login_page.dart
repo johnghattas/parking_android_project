@@ -1,32 +1,30 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:parking_project/GUI/mp_home.dart';
-import 'package:parking_project/providers/loading_and_response_provider.dart';
 import 'package:parking_project/services/sign_in_app.dart';
+import 'package:parking_project/shared/alerts_class.dart';
 import 'package:parking_project/shared/constant_widget.dart';
+import 'package:parking_project/shared/handling_auth_error_mixin.dart';
 import 'package:parking_project/widgets/custom_button.dart';
 import 'package:parking_project/widgets/phone_number.dart';
-import 'package:provider/provider.dart';
 
 import '../constant_colors.dart';
 import '../models/user_model.dart';
 import '../shared/screen_sized.dart';
 import '../widgets/text_custom_paint.dart';
 import 'regester_page_index.dart';
-
-import 'package:parking_project/shared/alerts_class.dart';
-import 'package:parking_project/shared/handling_auth_error_mixin.dart';
-
+import 'package:parking_project/providers/change_verification_state.dart';
+import 'package:provider/provider.dart';
+import 'package:parking_project/GUI/owner_home_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
- class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts{
+class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
   SignInServices _signInServices;
 
   var _passwordController = TextEditingController();
@@ -45,8 +43,6 @@ class LoginPage extends StatefulWidget {
 
     return WillPopScope(
       onWillPop: () async {
-
-
         return true;
       },
       child: Scaffold(
@@ -63,34 +59,39 @@ class LoginPage extends StatefulWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  isLoadingShow
-                      ? Stack(
+                  Stack(
+                    children: [
+                      Container(
+                        height: getProportionateScreenWidth(240),
+                        width: SizeConfig.width,
+                        child: TextAndCustomPaint(),
+                      ),
+                      Positioned(
+                        bottom: -10,
+                        right: 0,
+                        left: 0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              height: getProportionateScreenWidth(240),
-                              width: SizeConfig.width,
-                              child: TextAndCustomPaint(),
+                            Checkbox(
+                              onChanged: (value) => context.read<ChangeVerificationState>().changeAdmin(value),
+                              value: context.watch<ChangeVerificationState>().isAdmin,
                             ),
-                            Positioned(
-                              bottom: 0,
-                              right: 200,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.auto_awesome),
-                                  Text(context
-                                          .watch<LoadingAndErrorProvider>()
-                                          .error ??
-                                      ""),
-                                ],
-                              ),
-                            )
+                            Text(
+                              'Sign in like owner',
+                              style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  letterSpacing: 0.65),
+                            ),
+
                           ],
-                        )
-                      : Container(
-                          height: getProportionateScreenWidth(240),
-                          width: SizeConfig.width,
-                          child: TextAndCustomPaint(),
                         ),
+                      ),
+                    ],
+                  ),
                   VerticalSpacing(of: 20),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -179,7 +180,6 @@ class LoginPage extends StatefulWidget {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -187,21 +187,19 @@ class LoginPage extends StatefulWidget {
     _signInServices = SignInServices(context);
   }
 
-
-
-  void _addTokenInHive(String token) async{
+  Future<Client> _addTokenInHive(String token) async {
     Box userBox = await Hive.openBox('user_data');
     userBox.put('token', token);
 
     print(token);
     Client client = await _signInServices.getUser(token);
 
-    if(client != null) {
+    if (client != null) {
       userBox.put('data', client);
     }
 
     print('DONE ENTER THE TOKEN');
-
+    return client;
   }
 
   _logIn() async {
@@ -229,8 +227,8 @@ class LoginPage extends StatefulWidget {
 
     print(token.isEmpty);
 
-    _addTokenInHive(token);
-    if(isLoadingShow) {
+    Client client = await _addTokenInHive(token);
+    if (isLoadingShow) {
       Navigator.pop(context);
       isLoadingShow = false;
     }
@@ -241,14 +239,22 @@ class LoginPage extends StatefulWidget {
     //       builder: (context) => MapHome(),
     //     ),
     //     (route) => !route.navigator.canPop());
+    if (client.isOwner && context.read<ChangeVerificationState>().isAdmin) {
+      //to Admin page
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MapHome(),
-        ), (router) => router.isFirst);
+          context,
+          MaterialPageRoute(
+            builder: (context) => OwnerHomePage(),
+          ),
+              (router) => router.isFirst);
+    } else {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MapHome(),
+          ),
+              (router) => router.isFirst);
+
+    }
   }
-
-
-
-
 }
