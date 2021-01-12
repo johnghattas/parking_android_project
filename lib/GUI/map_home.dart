@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:parking_project/shared/constant_widget.dart';
 
 import '../shared/screen_sized.dart';
 
@@ -48,12 +50,12 @@ class _MapHomeState extends State<MapHome> {
     GetData();
   }
 
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
     return Scaffold(
+      appBar: ConstantWidget.appBarWhite,
       // 🚨 Body Of Google Maps Design 🚨
       body: Stack(fit: StackFit.expand, children: [
         Container(
@@ -68,36 +70,142 @@ class _MapHomeState extends State<MapHome> {
             },
           ),
         ),
+
         Positioned(
-          top: SizeConfig.height*0.050,
-          left: 10,
-          // 🚨 Search Box 🚨
-          child: InkWell(
-            child: SizedBox(
-              width: SizeConfig.width * 0.95,
-              child: Container(
-                color: Colors.white,
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          top: 0,
+          right: 0,
+          left: 0,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            width: double.infinity,
+            height: getProportionateScreenHeight(244.0),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(-0.02, 0.16),
+                end: Alignment(0.0, 1.0),
+                colors: [const Color(0xffffffff), const Color(0x00ffffff)],
+                stops: [0.0, 1.0],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0x1fffffff),
+                  offset: Offset(0, 2),
+                  blurRadius: 34,
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                VerticalSpacing(of: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text(
-                        'Search here',
-                        style: TextStyle(color: Colors.grey,fontSize: 20),
+                    InkWell(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 6),
+                        alignment: Alignment.center,
+                        width: getProportionateScreenWidth(233),
+                        height: getProportionateScreenWidth(45),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6.0),
+                          color: const Color(0xffffffff),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0x1a303030),
+                              offset: Offset(3, 6),
+                              blurRadius: 15,
+                            ),
+                          ],
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            'Parking In....',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 14,
+                              color: const Color(0xffbdbdbd),
+                              fontWeight: FontWeight.w500,
+                              height: 1.7,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ),
+                      onTap: () {
+                        showSearch(context: context, delegate: Search());
+                      },
                     ),
                     FlatButton(
-                        onPressed: () {},
-                        child: Text(''),shape: CircleBorder(side: BorderSide(color: Colors.amber),),minWidth: 70,)
+                      onPressed: () {},
+                      child: Text(''),
+                      shape: CircleBorder(
+                        side: BorderSide(color: Colors.amber),
+                      ),
+                      minWidth: 70,
+                    )
                   ],
                 ),
-              ),
+              ],
             ),
-            onTap: () {
-              showSearch(context: context, delegate: Search());
-            },
           ),
         ),
+
+        // Positioned(
+        //   top: SizeConfig.height * 0.050,
+        //   left: 10,
+        //   width: SizeConfig.width,
+        //   // 🚨 Search Box 🚨
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //     children: [
+        //       InkWell(
+        //         child: Container(
+        //           alignment: Alignment.center,
+        //           width: getProportionateScreenWidth(233),
+        //           height: getProportionateScreenHeight(45),
+        //           decoration: BoxDecoration(
+        //             borderRadius: BorderRadius.circular(6.0),
+        //             color: const Color(0xffffffff),
+        //             boxShadow: [
+        //               BoxShadow(
+        //                 color: const Color(0x1a303030),
+        //                 offset: Offset(0, 5),
+        //                 blurRadius: 15,
+        //               ),
+        //             ],
+        //           ),
+        //           child: SizedBox(
+        //             width:  double.infinity,
+        //             child: Text(
+        //               'Parking In....',
+        //               style: TextStyle(
+        //                 fontFamily: 'Poppins',
+        //                 fontSize: 14,
+        //                 color: const Color(0xffbdbdbd),
+        //                 fontWeight: FontWeight.w500,
+        //                 height: 1.7142857142857142,
+        //               ),
+        //               textAlign: TextAlign.left,
+        //             ),
+        //           ),
+        //         ),
+        //         onTap: () {
+        //           showSearch(context: context, delegate: Search());
+        //         },
+        //       ),
+        //
+        //       FlatButton(
+        //         onPressed: () {},
+        //         child: Text(''),
+        //         shape: CircleBorder(
+        //           side: BorderSide(color: Colors.amber),
+        //         ),
+        //         minWidth: 70,
+        //       )
+        //     ],
+        //   ),
+        // ),
         // 🚨 Button For Getting Your Current Location 🚨
         Positioned(
           right: 0,
@@ -127,24 +235,30 @@ class _MapHomeState extends State<MapHome> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.2,
           child: Container(
-            // 🚨 Getting Data From Date Base 🚨
+              // 🚨 Getting Data From Date Base 🚨
               child: FutureBuilder(
             future: GetData(),
             builder: (context, snapshot) {
-              if(snapshot.hasData){
+              if (snapshot.hasData) {
                 return PageView.builder(
                   controller: _pageController,
                   scrollDirection: Axis.horizontal,
-                  onPageChanged: (pageIndex) async{
+                  onPageChanged: (pageIndex) async {
                     AllMarkers.add(Marker(
                         rotation: 300,
-                        icon: await BitmapDescriptor.fromAssetImage(ImageConfiguration.empty, "assets/map/marker1.png"),
+                        icon: await BitmapDescriptor.fromAssetImage(
+                            ImageConfiguration.empty, "assets/map/marker1.png"),
                         markerId: MarkerId('second'),
-                        position: LatLng(double.parse(snapshot.data['data'][pageIndex]['lat']), double.parse(snapshot.data['data'][pageIndex]['long']))));
-                      lat = double.parse(snapshot.data['data'][pageIndex]['lat']);
-                      long = double.parse(snapshot.data['data'][pageIndex]['long']);
-                      setState(() {});
-                      GoToYourLocation();
+                        position: LatLng(
+                            double.parse(
+                                snapshot.data['data'][pageIndex]['lat']),
+                            double.parse(
+                                snapshot.data['data'][pageIndex]['long']))));
+                    lat = double.parse(snapshot.data['data'][pageIndex]['lat']);
+                    long =
+                        double.parse(snapshot.data['data'][pageIndex]['long']);
+                    setState(() {});
+                    GoToYourLocation();
                   },
                   itemCount: snapshot.data['data'].length,
                   itemBuilder: (context, i) {
@@ -157,7 +271,8 @@ class _MapHomeState extends State<MapHome> {
                             child: Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.all(15.0),
@@ -165,7 +280,7 @@ class _MapHomeState extends State<MapHome> {
                                         width: SizeConfig.width * 0.52,
                                         child: Column(
                                           crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               snapshot.data['data'][i]['name'],
@@ -179,9 +294,10 @@ class _MapHomeState extends State<MapHome> {
                                               snapshot.data['data'][i]['city'] +
                                                   ', ' +
                                                   snapshot.data['data'][i]
-                                                  ['street'],
+                                                      ['street'],
                                               style: TextStyle(
-                                                  color: Colors.grey, fontSize: 17),
+                                                  color: Colors.grey,
+                                                  fontSize: 17),
                                               overflow: TextOverflow.ellipsis,
                                               maxLines: 1,
                                             ),
@@ -200,7 +316,8 @@ class _MapHomeState extends State<MapHome> {
                                           color: Colors.green,
                                         ),
                                         shape: CircleBorder(
-                                            side: BorderSide(color: Colors.grey)),
+                                            side:
+                                                BorderSide(color: Colors.grey)),
                                         color: Colors.white,
                                       ),
                                     )
@@ -210,7 +327,6 @@ class _MapHomeState extends State<MapHome> {
                                   padding: const EdgeInsets.only(left: 35),
                                   child: Row(
                                     children: [
-
                                       // 🚨 Directions Button 🚨
                                       FlatButton.icon(
                                         onPressed: () {},
@@ -223,7 +339,7 @@ class _MapHomeState extends State<MapHome> {
                                         color: Colors.green,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
-                                            BorderRadius.circular(18.0)),
+                                                BorderRadius.circular(18.0)),
                                       ),
                                       SizedBox(
                                         width: 10,
@@ -239,9 +355,10 @@ class _MapHomeState extends State<MapHome> {
                                         textColor: Colors.black,
                                         color: Colors.white,
                                         shape: RoundedRectangleBorder(
-                                            side: BorderSide(color: Colors.grey),
+                                            side:
+                                                BorderSide(color: Colors.grey),
                                             borderRadius:
-                                            BorderRadius.circular(18.0)),
+                                                BorderRadius.circular(18.0)),
                                       ),
                                     ],
                                   ),
@@ -253,7 +370,6 @@ class _MapHomeState extends State<MapHome> {
                       ),
                       // 🚨 When User Click On Card 🚨
                       onTap: () {
-                        print(_scrollController.offset.round() / 190);
                         showModalBottomSheet(
                           context: context,
                           builder: (context) {
@@ -262,7 +378,8 @@ class _MapHomeState extends State<MapHome> {
                                 Column(
                                   children: [
                                     Container(
-                                      height: MediaQuery.of(context).size.height,
+                                      height:
+                                          MediaQuery.of(context).size.height,
                                     )
                                   ],
                                 ),
@@ -274,8 +391,11 @@ class _MapHomeState extends State<MapHome> {
                     );
                   },
                 );
-              }else
-                return SpinKitPumpingHeart(color: Colors.red, size: 75.0,);
+              } else
+                return SpinKitPumpingHeart(
+                  color: Colors.red,
+                  size: 75.0,
+                );
             },
           )),
         ),
@@ -307,9 +427,12 @@ class Search extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
-      Navigator.pop(context);
-    },);
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
   }
 
   @override

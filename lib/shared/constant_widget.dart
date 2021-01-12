@@ -11,4 +11,13 @@ class ConstantWidget {
       elevation: 0.0,
     ),
   );
+
+  static Widget appBarWhite = PreferredSize(
+    preferredSize: Size.fromHeight(0),
+    child: AppBar(
+      backgroundColor: Colors.white,
+      brightness: Brightness.light,
+      elevation: 0.0,
+    ),
+  );
 }
