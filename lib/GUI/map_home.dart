@@ -151,61 +151,6 @@ class _MapHomeState extends State<MapHome> {
           ),
         ),
 
-        // Positioned(
-        //   top: SizeConfig.height * 0.050,
-        //   left: 10,
-        //   width: SizeConfig.width,
-        //   // 🚨 Search Box 🚨
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       InkWell(
-        //         child: Container(
-        //           alignment: Alignment.center,
-        //           width: getProportionateScreenWidth(233),
-        //           height: getProportionateScreenHeight(45),
-        //           decoration: BoxDecoration(
-        //             borderRadius: BorderRadius.circular(6.0),
-        //             color: const Color(0xffffffff),
-        //             boxShadow: [
-        //               BoxShadow(
-        //                 color: const Color(0x1a303030),
-        //                 offset: Offset(0, 5),
-        //                 blurRadius: 15,
-        //               ),
-        //             ],
-        //           ),
-        //           child: SizedBox(
-        //             width:  double.infinity,
-        //             child: Text(
-        //               'Parking In....',
-        //               style: TextStyle(
-        //                 fontFamily: 'Poppins',
-        //                 fontSize: 14,
-        //                 color: const Color(0xffbdbdbd),
-        //                 fontWeight: FontWeight.w500,
-        //                 height: 1.7142857142857142,
-        //               ),
-        //               textAlign: TextAlign.left,
-        //             ),
-        //           ),
-        //         ),
-        //         onTap: () {
-        //           showSearch(context: context, delegate: Search());
-        //         },
-        //       ),
-        //
-        //       FlatButton(
-        //         onPressed: () {},
-        //         child: Text(''),
-        //         shape: CircleBorder(
-        //           side: BorderSide(color: Colors.amber),
-        //         ),
-        //         minWidth: 70,
-        //       )
-        //     ],
-        //   ),
-        // ),
         // 🚨 Button For Getting Your Current Location 🚨
         Positioned(
           right: 0,
