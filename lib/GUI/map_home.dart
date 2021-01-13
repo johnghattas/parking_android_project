@@ -6,7 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import '../shared/screen_sized.dart';
 
 class MapHome extends StatefulWidget {
@@ -30,7 +29,9 @@ class _MapHomeState extends State<MapHome> {
 
     for (int i = 0; i < ResbonsBody['data'].length; i++) {
       AllMarkers.add(
-        Marker(
+        Marker(onTap: () {
+          _pageController.animateToPage(i, duration: Duration(milliseconds: 20), curve: Curves.easeIn);
+        },
             icon: await BitmapDescriptor.fromAssetImage(
                 ImageConfiguration(), 'assets/map/garage3.png'),
             markerId: MarkerId('$i'),

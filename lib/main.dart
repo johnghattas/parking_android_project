@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:parking_project/GUI/map_home.dart';
 import 'package:parking_project/models/user_model.dart';
 import 'package:provider/provider.dart';
 import 'package:parking_project/constant_colors.dart';
