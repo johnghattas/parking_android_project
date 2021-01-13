@@ -8,7 +8,6 @@ import 'package:parking_project/providers/change_verification_state.dart';
 import 'package:parking_project/providers/loading_and_response_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
-
 import 'GUI/welcome_page.dart';
 import 'package:http/http.dart' as http;
 import 'const_data.dart';
