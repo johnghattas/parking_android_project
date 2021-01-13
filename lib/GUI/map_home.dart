@@ -32,7 +32,7 @@ class _MapHomeState extends State<MapHome> {
     for (int i = 0; i < ResbonsBody['data'].length; i++) {
       AllMarkers.add(
         Marker(onTap: () {
-          _pageController.animateToPage(i, duration: Duration(milliseconds: 20), curve: Curves.easeIn)
+          _pageController.animateToPage(i, duration: Duration(milliseconds: 20), curve: Curves.easeIn);
         },
             icon: await BitmapDescriptor.fromAssetImage(
                 ImageConfiguration(), 'assets/map/garage3.png'),
