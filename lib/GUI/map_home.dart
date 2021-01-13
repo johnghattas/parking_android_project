@@ -20,7 +20,6 @@ class _MapHomeState extends State<MapHome> {
   List<Marker> AllMarkers = [];
   double lat = 0.0;
   double long = 0.0;
-  ScrollController _scrollController = ScrollController();
   Completer<GoogleMapController> _controller = Completer();
   PageController _pageController = PageController(viewportFraction: 0.89);
 
@@ -32,7 +31,9 @@ class _MapHomeState extends State<MapHome> {
 
     for (int i = 0; i < ResbonsBody['data'].length; i++) {
       AllMarkers.add(
-        Marker(
+        Marker(onTap: () {
+          _pageController.animateToPage(i, duration: Duration(milliseconds: 20), curve: Curves.easeIn)
+        },
             icon: await BitmapDescriptor.fromAssetImage(
                 ImageConfiguration(), 'assets/map/garage3.png'),
             markerId: MarkerId('$i'),
