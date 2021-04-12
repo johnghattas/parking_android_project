@@ -4,11 +4,11 @@ import 'package:parking_project/shared/screen_sized.dart';
 
 import '../constant_colors.dart';
 
-Future<bool> checkNumberFromCode(String value, FieldPhoneValidate fieldPhoneValidate, ScrollController scrollController) async {
+Future<bool> checkNumberFromCode(String value, FieldPhoneValidate fieldPhoneValidate, ScrollController? scrollController) async {
   if (await fieldPhoneValidate.correctField(value.replaceAll(' ', ''))) {
     print('here');
 
-    scrollToBottom(scrollController);
+    scrollToBottom(scrollController!);
     return true;
   } else
     return false;

@@ -7,18 +7,18 @@ import '../constant_colors.dart';
 
 class CountryCodeFieldHint extends StatelessWidget {
   CountryCodeFieldHint({
-    Key key,
+    Key? key,
     this.onChange,
     this.initialCode = 'EG',
     this.onTap,
     this.focusNode, this.onChangedCountry,
   }) : super(key: key);
 
-  final ValueChanged<String> onChange;
+  final ValueChanged<String>? onChange;
   final String initialCode;
-  final Function() onTap;
-  final FocusNode focusNode;
-  final ValueChanged<CountryCode> onChangedCountry;
+  final Function()? onTap;
+  final FocusNode? focusNode;
+  final ValueChanged<CountryCode>? onChangedCountry;
 
   @override
   Widget build(BuildContext context) {

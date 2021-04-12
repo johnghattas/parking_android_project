@@ -8,13 +8,13 @@ import '../constant_colors.dart';
 
 class CustomContinueButton extends StatelessWidget {
   const CustomContinueButton({
-    Key key,
+    Key? key,
     this.title,
     this.onPressed,
     this.isEnable = false,
   }) : super(key: key);
-  final String title;
-  final Function onPressed;
+  final String? title;
+  final Function? onPressed;
   final bool isEnable;
 
   @override
@@ -38,7 +38,7 @@ class CustomContinueButton extends StatelessWidget {
           ),
           child: MaterialButton(
             height: getProportionateScreenWidth(55),
-            onPressed: onPressed == null || !isEnable? null : () => onPressed(),
+            onPressed: onPressed == null || !isEnable? null : () => onPressed!(),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6.0),
             ),

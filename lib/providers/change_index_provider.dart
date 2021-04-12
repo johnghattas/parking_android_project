@@ -4,7 +4,7 @@ class ChangeIndex extends ChangeNotifier {
   int pageIndex = 0;
   int _pageCount;
 
-  bool isStopped;
+  bool? isStopped;
 
   ChangeIndex([this._pageCount = 3]);
 

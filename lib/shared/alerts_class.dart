@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class Alerts {
 
-  Future<void> errorDialog(BuildContext context,{String title="Error", String content="Error"}) async {
+  Future<void> errorDialog(BuildContext context,{String title="Error", String? content}) async {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: Text(content??""),
-        title: Text(title??""),
+        content: Text(content??"Error"),
+        title: Text(title),
       ),
     );
   }

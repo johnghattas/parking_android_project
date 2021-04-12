@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:parking_project/block/garage_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -18,12 +19,12 @@ class MyApp extends StatelessWidget {
 
 class ListAnimation extends StatefulWidget {
   final bool minimize;
-  final Widget child;
+  final Widget? child;
   final double height;
   final double minHeight;
 
   const ListAnimation(
-      {Key key,
+      {Key? key,
       this.minimize = false,
       this.child,
       this.height = 200,
@@ -39,7 +40,6 @@ class _ListAnimationState extends State<ListAnimation> {
   void initState() {
     super.initState();
     print('this');
-
   }
 
   @override
@@ -48,32 +48,39 @@ class _ListAnimationState extends State<ListAnimation> {
   }
 
   static const double SAVE_POSITION = 100;
-  Function onClick;
+  Function? onClick;
   double bottomPosition = 0,
-      first,
+      first = 0,
       firstPosition = 0,
       secondPosition = SAVE_POSITION;
   bool isFirstPosition = true;
   bool isTaped = false;
 
-  _changeTopBottom(double first, double second, double sFirst, double toBottom) {
+  _changeTopBottom(
+      double first, double second, double? sFirst, double toBottom) {
     double def;
 
-    if (first > second && sFirst > first) {
+    if (first > second && sFirst! > first) {
       def = first - second;
       if (bottomPosition + def > 0) {
         return;
       }
-      setState(() => bottomPosition += def);
+      // setState(() => bottomPosition += def);
+      context.read<GarageBloc>().add(ChangeBPEvent(bottomPosition += def));
+
     }
-    if (first <= second && sFirst < first) {
+    if (first <= second && sFirst! < first) {
       def = second - first;
       if (bottomPosition - def < toBottom) {
         print('this button < 100');
-        setState(() => bottomPosition = toBottom);
+        // setState(() => bottomPosition = toBottom);
+        context.read<GarageBloc>().add(ChangeBPEvent(bottomPosition = toBottom));
+
         return;
       }
-      setState(() => bottomPosition -= def);
+      // setState(() => bottomPosition -= def);
+      context.read<GarageBloc>().add(ChangeBPEvent(bottomPosition -= def));
+
     }
   }
 
@@ -90,9 +97,8 @@ class _ListAnimationState extends State<ListAnimation> {
       children: <Widget>[
         AnimatedPositioned(
           duration: Duration(milliseconds: 150),
-          bottom: bottomPosition,
+          bottom: context.watch<GarageBloc>().bottomPosition,
           height: widget.height,
-
           child: GestureDetector(
             onPanUpdate: (details) {
               isTaped = true;
@@ -104,7 +110,8 @@ class _ListAnimationState extends State<ListAnimation> {
               } else {
                 secondPosition = details.globalPosition.dy;
               }
-              _changeTopBottom(firstPosition, secondPosition, first, _toBottom);
+              _changeTopBottom(
+                  firstPosition, secondPosition, first, _toBottom);
               firstPosition = secondPosition;
             },
             onPanEnd: (details) {
@@ -113,19 +120,28 @@ class _ListAnimationState extends State<ListAnimation> {
               double velocity = details.velocity.pixelsPerSecond.dy;
               print(
                   'the velocity is $first,    $secondPosition  $firstPosition  $velocity');
-              if (((velocity < -100 && first > firstPosition)) &&
+              if (velocity < -100 &&
+                  first> firstPosition &&
                   firstPosition < height - bottomPosition) {
                 if (velocity < 0) setState(() => bottomPosition = height);
                 // setState(() => bottomPosition = height);
                 // sleep(Duration(milliseconds: 150));
               } else if (secondPosition > first &&
                   (velocity >= 100 || velocity == 0)) {
-                setState(() => bottomPosition = _toBottom);
+                // setState(() => );
+
+                context.read<GarageBloc>().add(ChangeBPEvent(_toBottom));
+
+                bottomPosition = _toBottom;
               } else {
-                setState(() {
-                  bottomPosition = 0;
-                  isFirstPosition = true;
-                });}
+
+                // setState(() {
+                //
+                // });
+                context.read<GarageBloc>().add(ChangeBPEvent(0));
+                bottomPosition = 0;
+                isFirstPosition = true;
+              }
             },
             child: widget.child,
           ),

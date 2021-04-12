@@ -2,14 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class KeyboardChangeBlock {
-  StreamController _streamController;
+  late StreamController _streamController;
 
 
   StreamSink<double> get _chuckListSink =>
-      _streamController.sink;
+      _streamController.sink as StreamSink<double>;
 
   Stream<double> get chuckListStream =>
-      _streamController.stream;
+      _streamController.stream as Stream<double>;
 
 
   KeyboardChangeBlock() {

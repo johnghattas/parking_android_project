@@ -5,22 +5,22 @@ part 'user_model.g.dart';
 @HiveType(typeId : 1)
 class Client {
   @HiveField(0)
-  String id;
+  String? id;
   @HiveField(1)
-  String phone;
+  String? phone;
   @HiveField(2)
-  String firstName;
+  String? firstName;
   @HiveField(3)
-  String lastName;
+  String? lastName;
   @HiveField(4)
-  bool isOwner = false;
+  bool? isOwner = false;
 
   Client({
-    @required this.id,
-    @required this.phone,
-    @required this.firstName,
-    @required this.lastName,
-    @required this.isOwner,
+    required this.id,
+    required this.phone,
+    required this.firstName,
+    required this.lastName,
+    required this.isOwner,
   });
 
   Client.fromMap(Map map) {
@@ -37,17 +37,17 @@ class Client {
       'phone': this.phone,
       'first_name': this.firstName,
       'last_name': this.lastName,
-      'is_owner': this.isOwner?"1":"0",
+      'is_owner': this.isOwner!?"1":"0",
     };
   }
 
   get name => '$firstName $lastName';
 
   void checkAsserts() {
-    assert(phone != null && phone.isNotEmpty);
-    assert(firstName != null && firstName.isNotEmpty);
-    assert(lastName != null && lastName.isNotEmpty);
-    assert(id != null && id.isNotEmpty);
+    assert(phone != null && phone!.isNotEmpty);
+    assert(firstName != null && firstName!.isNotEmpty);
+    assert(lastName != null && lastName!.isNotEmpty);
+    assert(id != null && id!.isNotEmpty);
     assert(isOwner != null);
   }
 }

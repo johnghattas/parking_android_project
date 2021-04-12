@@ -17,11 +17,11 @@ class ClientAdapter extends TypeAdapter<Client> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Client(
-      id: fields[0] as String,
-      phone: fields[1] as String,
-      firstName: fields[2] as String,
-      lastName: fields[3] as String,
-      isOwner: fields[4] as bool,
+      id: fields[0] as String?,
+      phone: fields[1] as String?,
+      firstName: fields[2] as String?,
+      lastName: fields[3] as String?,
+      isOwner: fields[4] as bool?,
     );
   }
 

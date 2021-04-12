@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:parking_project/providers/change_verification_state.dart';
+import 'package:provider/provider.dart';
 
 main() {
   runApp(Provider<ChangeVerificationState>(
@@ -40,7 +40,7 @@ class SecondTestApp extends StatelessWidget {
       child: Consumer<ChangeVerificationState>(
         builder: (context, value, child) {
           // print(value.verificationId);
-          return child;
+          return child!;
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -4,13 +4,13 @@ import '../shared/screen_sized.dart';
 
 class PhoneTextValidation extends StatelessWidget {
   const PhoneTextValidation({
-    Key key,
-    @required this.phone,
+    Key? key,
+    required this.phone,
     this.code,
   }) : super(key: key);
 
-  final String phone;
-  final String code;
+  final String? phone;
+  final String? code;
 
   @override
   Widget build(BuildContext context) {

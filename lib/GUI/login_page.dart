@@ -1,13 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:parking_project/GUI/owner_home_page.dart';
+import 'package:parking_project/block/garage_bloc.dart';
+import 'package:parking_project/providers/change_verification_state.dart';
+import 'package:parking_project/repositers/parking_repo.dart';
 import 'package:parking_project/services/sign_in_app.dart';
 import 'package:parking_project/shared/alerts_class.dart';
 import 'package:parking_project/shared/constant_widget.dart';
 import 'package:parking_project/shared/handling_auth_error_mixin.dart';
 import 'package:parking_project/widgets/custom_button.dart';
 import 'package:parking_project/widgets/phone_number.dart';
+import 'package:provider/provider.dart';
 
 import '../constant_colors.dart';
 import '../models/user_model.dart';
@@ -15,9 +22,6 @@ import '../shared/screen_sized.dart';
 import '../widgets/text_custom_paint.dart';
 import 'map_home.dart';
 import 'regester_page_index.dart';
-import 'package:parking_project/providers/change_verification_state.dart';
-import 'package:provider/provider.dart';
-import 'package:parking_project/GUI/owner_home_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -25,14 +29,14 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
-  SignInServices _signInServices;
+  late SignInServices _signInServices;
 
   var _passwordController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String _code = '+20';
+  String? _code = '+20';
 
-  String _phone;
+  late String _phone;
 
   bool isLoadingShow = false;
 
@@ -47,7 +51,7 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
       },
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: ConstantWidget.appBarGreen,
+        appBar: ConstantWidget.appBarGreen as PreferredSizeWidget?,
         body: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -74,8 +78,12 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Checkbox(
-                              onChanged: (value) => context.read<ChangeVerificationState>().changeAdmin(value),
-                              value: context.watch<ChangeVerificationState>().isAdmin,
+                              onChanged: (value) => context
+                                  .read<ChangeVerificationState>()
+                                  .changeAdmin(value),
+                              value: context
+                                  .watch<ChangeVerificationState>()
+                                  .isAdmin,
                             ),
                             Text(
                               'Sign in like owner',
@@ -86,7 +94,6 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
                                   fontSize: 14,
                                   letterSpacing: 0.65),
                             ),
-
                           ],
                         ),
                       ),
@@ -187,12 +194,12 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
     _signInServices = SignInServices(context);
   }
 
-  Future<Client> _addTokenInHive(String token) async {
+  Future<Client?> _addTokenInHive(String token) async {
     Box userBox = await Hive.openBox('user_data');
     userBox.put('token', token);
 
     print(token);
-    Client client = await _signInServices.getUser(token);
+    Client? client = await (_signInServices.getUser(token));
 
     if (client != null) {
       userBox.put('data', client);
@@ -205,19 +212,19 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
   _logIn() async {
     String token;
 
-    print(_code + _phone.replaceAll(' ', ''));
+    print(_code! + _phone.replaceAll(' ', ''));
 
     try {
       var time = DateTime.now();
 
       token = await _signInServices.signIn(
-          phone: _code + _phone.replaceAll(' ', ''),
+          phone: _code! + _phone.replaceAll(' ', ''),
           password: _passwordController.text,
           isOwner: true);
 
       print('the time of this sequense is ${DateTime.now().difference(time)}');
     } catch (e) {
-      print(e);
+      print('this is ' + e.toString());
       return;
     }
 
@@ -227,10 +234,14 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
 
     print(token.isEmpty);
 
-    Client client = await _addTokenInHive(token);
+    Client? client = await (_addTokenInHive(token));
     if (isLoadingShow) {
       Navigator.pop(context);
       isLoadingShow = false;
+    }
+    if (client == null) {
+      print('is null');
+      return;
     }
 
     // Navigator.pushAndRemoveUntil(
@@ -239,22 +250,24 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
     //       builder: (context) => MapHome(),
     //     ),
     //     (route) => !route.navigator.canPop());
-    if (client.isOwner && context.read<ChangeVerificationState>().isAdmin) {
+    if (client.isOwner! && context.read<ChangeVerificationState>().isAdmin!) {
       //to Admin page
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => OwnerHomePage(),
           ),
-              (router) => router.isFirst);
+          (router) => router.isFirst);
     } else {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => MapHome(),
+            builder: (context) => BlocProvider(
+                create: (context) =>
+                    GarageBloc(ParkingRepo())..add(GetDataEvent()),
+                child: MapHome()),
           ),
-              (router) => router.isFirst);
-
+          (router) => router.isFirst);
     }
   }
 }

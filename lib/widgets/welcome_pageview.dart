@@ -9,34 +9,34 @@ import '../providers/change_index_provider.dart';
 import '../shared/screen_sized.dart';
 
 class StackPageView extends StatefulWidget {
-  const StackPageView({Key key}) : super(key: key);
+  const StackPageView({Key? key}) : super(key: key);
 
   @override
   _StackPageViewState createState() => _StackPageViewState();
 }
 
 class _StackPageViewState extends State<StackPageView> {
-  PageController _pageController;
+  PageController? _pageController;
 
   double _position = -500;
 
-  Timer _timer;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    _pageController.addListener(() {
+    _pageController!.addListener(() {
       setState(() {
-        _position = _pageController.offset;
-        if (_position <= SizeConfig.width) {
-          _position = getValue(_position, 0, SizeConfig.width, -500, -80);
-        } else if (_position <= SizeConfig.width * 2 + 10) {
+        _position = _pageController!.offset;
+        if (_position <= SizeConfig.width!) {
+          _position = getValue(_position, 0, SizeConfig.width!, -500, -80);
+        } else if (_position <= SizeConfig.width! * 2 + 10) {
           _position = getValue(
-              _position, SizeConfig.width, SizeConfig.width * 2, -80, -900);
+              _position, SizeConfig.width!, SizeConfig.width! * 2, -80, -900);
         } else {
           _position = getValue(
-              _position, SizeConfig.width, SizeConfig.width * 2, -80, -900);
+              _position, SizeConfig.width!, SizeConfig.width! * 2, -80, -900);
         }
       });
     });
@@ -46,7 +46,7 @@ class _StackPageViewState extends State<StackPageView> {
           Provider.of<ChangeIndex>(context, listen: false);
       if (!(changeIndex.isStopped ?? false)) {
         //print('this running');
-        _pageController.animateToPage(
+        _pageController!.animateToPage(
             ++changeIndex.pageIndex == 3 ? 0 : changeIndex.pageIndex,
             duration: Duration(milliseconds: 250),
             curve: Curves.easeIn);
@@ -59,7 +59,7 @@ class _StackPageViewState extends State<StackPageView> {
     return Stack(
       children: [
         Container(
-            height: getProportionateScreenWidth(SizeConfig.height * 0.4),
+            height: getProportionateScreenWidth(SizeConfig.height! * 0.4),
             width: SizeConfig.width,
             child: CustomPaint(
               painter: CustomPaints(),
@@ -72,14 +72,14 @@ class _StackPageViewState extends State<StackPageView> {
           child: SvgPicture.asset(
             'assets/images/image111.svg',
             height: getProportionateScreenWidth(200),
-            width: SizeConfig.width * 3,
+            width: SizeConfig.width! * 3,
             fit: BoxFit.fitWidth,
           ),
         ),
         Consumer<ChangeIndex>(
           builder: (context, value, child) {
             return Container(
-              height: getProportionateScreenWidth(SizeConfig.height * 0.4),
+              height: getProportionateScreenWidth(SizeConfig.height! * 0.4),
               width: double.infinity,
               child: PageView(
                 controller: _pageController,

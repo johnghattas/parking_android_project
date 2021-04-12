@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +11,9 @@ import 'package:parking_project/shared/handling_auth_error_mixin.dart';
 
 import 'map_home.dart';
 class InformationSignUp extends StatefulWidget {
-  final User user;
+  final User? user;
 
-  const InformationSignUp({Key key, this.user}) : super(key: key);
+  const InformationSignUp({Key? key, this.user}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -26,7 +28,7 @@ class _MyAppState extends State<InformationSignUp> with HandlingAuthErrors, Aler
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
-  SignInServices _signInServices;
+  late SignInServices _signInServices;
 
   Widget build(BuildContext context) {
     handleException(context);
@@ -221,7 +223,7 @@ class _MyAppState extends State<InformationSignUp> with HandlingAuthErrors, Aler
                       child: TextFormField(
                         controller: _confirmPasswordController,
                         validator: (val) =>
-                            val.length < 6 ? 'Password too short.' : null,
+                            val!.length < 6 ? 'Password too short.' : null,
                         cursorColor: Colors.green,
                         obscureText: mark,
                         decoration: InputDecoration(
@@ -296,16 +298,16 @@ class _MyAppState extends State<InformationSignUp> with HandlingAuthErrors, Aler
 
   _signUp() async {
     Client client = Client(
-      id: widget.user.uid,
-      phone: widget.user.phoneNumber,
+      id: widget.user!.uid,
+      phone: widget.user!.phoneNumber,
       isOwner: false,
       lastName: _lastNameController.text,
       firstName: _firstNameController.text
     );
-    String token;
+    String? token;
 
     try {
-      token = await _signInServices.signUp(client: client, passwordMap: {'password': _passwordController.text});
+      token = await (_signInServices.signUp(client: client, passwordMap: {'password': _passwordController.text}) as FutureOr<String?>);
     } catch (e) {
       // print(e);
       throw e;

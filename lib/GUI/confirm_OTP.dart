@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:parking_project/GUI/information_sign_up.dart';
+import 'package:parking_project/GUI/owner_information_sign_up.dart';
+import 'package:parking_project/shared/alerts_class.dart';
 import 'package:provider/provider.dart';
 
 import '../block/keyboard_change.dart';
@@ -15,15 +17,13 @@ import '../widgets/phone_text_validation.dart';
 import '../widgets/register_floating_action_button.dart';
 import '../widgets/text_custom_paint.dart';
 import '../widgets/text_with_keyboard_animation.dart';
-import 'package:parking_project/shared/alerts_class.dart';
-import 'package:parking_project/GUI/owner_information_sign_up.dart';
 
 class OPTPage extends StatefulWidget {
-  final String phone;
+  final String? phone;
 
-  final String code;
+  final String? code;
 
-  const OPTPage({Key key, this.phone, this.code}) : super(key: key);
+  const OPTPage({Key? key, this.phone, this.code}) : super(key: key);
 
   @override
   _OPTPageState createState() => _OPTPageState();
@@ -33,9 +33,9 @@ class _OPTPageState extends State<OPTPage> with Alerts{
   final int digits = 6;
   final ScrollController _scrollController = ScrollController();
   double _position = 0;
-  PhoneVerification _phoneVerification;
+  late PhoneVerification _phoneVerification;
   bool _isSuccess = false;
-  List _code;
+  List? _code;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
     _authVerification(context);
 
     return Scaffold(
-      appBar: ConstantWidget.appBarGreen,
+      appBar: ConstantWidget.appBarGreen as PreferredSizeWidget?,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -68,7 +68,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
                   ),
                 ),
                 Container(
-                  height: SizeConfig.height - _heightOfVictor() - 45,
+                  height: SizeConfig.height! - _heightOfVictor() - 45,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -94,7 +94,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
       ),
       floatingActionButton: RegFAB(isSuccess: _isSuccess, onPressed: () {
 
-        if (context.read<ChangeVerificationState>().isAdmin) {
+        if (context.read<ChangeVerificationState>().isAdmin!) {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminInformationSignUp(user: _phoneVerification.user),));
 
         } else {
@@ -110,8 +110,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
 
   @override
   void deactivate() {
-    Provider.of<ChangeVerificationState>(context, listen: false).digits =
-        List(6);
+    Provider.of<ChangeVerificationState>(context, listen: false).digits = List.filled(6, null, growable: false);
     _code = null;
     super.deactivate();
   }
@@ -130,7 +129,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
     super.initState();
 
     _phoneVerification = PhoneVerification(context: context)
-      ..phoneVerification(widget.code + widget.phone.replaceAll(' ', ''));
+      ..phoneVerification(widget.code! + widget.phone!.replaceAll(' ', ''));
 
     _scrollController.addListener(() {
       print(_scrollController.position.pixels);
@@ -148,7 +147,6 @@ class _OPTPageState extends State<OPTPage> with Alerts{
 
     if (watch.isFullDigit && watch.verificationId != null) {
       AuthCredential auth = await _phoneVerification.phoneValidationComplete();
-      print(auth?.asMap());
 
       print('this');
     }

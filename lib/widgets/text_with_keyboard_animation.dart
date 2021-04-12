@@ -6,8 +6,8 @@ class TextWithKeyboardAnimation extends StatelessWidget {
 
 
   const TextWithKeyboardAnimation({
-    Key key,
-    this.position,
+    Key? key,
+    required this.position,
   }) : super(key: key);
 
   final double position;
@@ -19,7 +19,7 @@ class TextWithKeyboardAnimation extends StatelessWidget {
       child: Expanded(
         child: Stack(
           children: [
-            StreamBuilder(
+            StreamBuilder<double>(
                 stream: keyboardBlock.chuckListStream,
                 builder: (context, snapshot) {
                   return AnimatedPositioned(
@@ -27,7 +27,7 @@ class TextWithKeyboardAnimation extends StatelessWidget {
                     // top: 50,
                     bottom: SizeConfig.orientation == Orientation.portrait &&
                         (snapshot.data ?? 0) > 0
-                        ? snapshot.data + 10 - position
+                        ? ((snapshot.data)?? 0) + 10 - position
                         : 10,
 
                     child: Text.rich(

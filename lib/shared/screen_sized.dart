@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class SizeConfig {
-  MediaQueryData _mediaQuery;
-  static double height;
-  static double width;
-  static Orientation orientation;
-  static double bottom;
+  late MediaQueryData _mediaQuery;
+  static double? height;
+  static double? width;
+  static Orientation? orientation;
+  static double? bottom;
 
 
 
@@ -22,27 +22,27 @@ class SizeConfig {
 
 
 
-  static bool get isKeyBoardOpen => bottom > 0;
+  static bool get isKeyBoardOpen => bottom! > 0;
 
   // static double get screenHeight => orientation == Orientation.portrait ? height - bottom : height;
 }
 
 // Get the proportionate height as per screen size
 double getProportionateScreenHeight(double inputHeight) {
-  double screenHeight = SizeConfig.height;
+  double screenHeight = SizeConfig.height!;
   // Our designer use iPhone 11 , that's why we use 896.0
   return (inputHeight / 759.2727272727273) * screenHeight;
 }
 // Get the proportionate height as per screen size when orientation [portrait]
 double getHeightWhenOrientationLand(double inputHeight, [double min = 0]) {
-  double screenWidth = SizeConfig.height;
+  double screenWidth = SizeConfig.height!;
   double value = (inputHeight / 392.72727272727275) * screenWidth;
   return value < min ? inputHeight : value;
 }
 
 // Get the proportionate height as per screen size
 double getProportionateScreenWidth(double inputWidth) {
-  double screenWidth = SizeConfig.width;
+  double screenWidth = SizeConfig.width!;
   // 414 is the layout width that designer use or you can say iPhone 11  width
   return (inputWidth / 392.72727272727275) * screenWidth;
 }
@@ -50,7 +50,7 @@ double getProportionateScreenWidth(double inputWidth) {
 // For add free space vertically
 class VerticalSpacing extends StatelessWidget {
   const VerticalSpacing({
-    Key key,
+    Key? key,
     this.of = 25,
   }) : super(key: key);
 
@@ -65,7 +65,7 @@ class VerticalSpacing extends StatelessWidget {
 }// For add free space vertically
 class HorizontalSpace extends StatelessWidget {
   const HorizontalSpace({
-    Key key,
+    Key? key,
     this.of = 25,
   }) : super(key: key);
 

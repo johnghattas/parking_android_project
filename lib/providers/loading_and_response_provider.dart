@@ -5,7 +5,7 @@ enum LoadingErrorState { NONE, LOADING, DONE, ERROR, WORKING }
 class LoadingAndErrorProvider extends ChangeNotifier {
   LoadingErrorState state = LoadingErrorState.NONE;
 
-  String error;
+  String? error;
 
   changeState(LoadingErrorState state) {
     this.state = state;
@@ -18,7 +18,7 @@ class LoadingAndErrorProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setErrorWithoutNotify(String message,
+  setErrorWithoutNotify(String? message,
       [LoadingErrorState state = LoadingErrorState.ERROR]) {
     this.error = message;
     state = state;

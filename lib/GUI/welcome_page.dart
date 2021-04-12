@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
 import '../GUI/login_page.dart';
-import 'regester_page_index.dart';
 import '../constant_colors.dart';
 import '../providers/change_index_provider.dart';
 import '../shared/screen_sized.dart';
 import '../widgets/custom_button.dart';
-
 import '../widgets/welcome_pageview.dart';
+import 'regester_page_index.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -49,7 +49,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: SizeConfig.height - 24,
+                    height: SizeConfig.height! - 24,
                     color: Colors.white,
                   ),
                   ChangeNotifierProvider(
@@ -201,10 +201,10 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void navigateAndStopTimer(ChangeNotifier value, [Function function]) async {
+  void navigateAndStopTimer(ChangeNotifier value, [Function? function]) async {
     if (value is ChangeIndex) {
       (value).changeStopped(true);
-      await function();
+      await function!();
       (value).changeStopped(false);
     }
   }

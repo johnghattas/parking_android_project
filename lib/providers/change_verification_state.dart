@@ -5,21 +5,21 @@ enum VerificationState { VERIFIED, NONE_VERIFIED, VERIFYING, WRONG }
 class ChangeVerificationState extends ChangeNotifier {
 
   VerificationState status = VerificationState.NONE_VERIFIED;
-  String verificationId;
-  String error;
+  String? verificationId;
+  String? error;
 
   int lastIndex = 6;
-  List<int> digits = List(6);
+  List<int?> digits = List.filled(6, null, growable: false);
 
   bool isFullDigit = false;
-  bool isAdmin = false;
+  bool? isAdmin = false;
 
   setStatus(VerificationState state) {
     this.status = state;
     notifyListeners();
   }
 
-  changeAdmin(bool isAdmin){
+  changeAdmin(bool? isAdmin){
     this.isAdmin = isAdmin;
     notifyListeners();
 
@@ -46,7 +46,7 @@ class ChangeVerificationState extends ChangeNotifier {
     }
   }
 
-  setError(String message) {
+  setError(String? message) {
     this.error = message;
     this.status = VerificationState.NONE_VERIFIED;
 

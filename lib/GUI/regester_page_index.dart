@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/change_verification_state.dart';
-import '../shared/validatioin_phone_helper.dart';
-import 'confirm_OTP.dart';
 import '../shared/constant_widget.dart';
 import '../shared/country_field_validate.dart';
 import '../shared/screen_sized.dart';
+import '../shared/validatioin_phone_helper.dart';
 import '../widgets/country_code_field_hint.dart';
 import '../widgets/custom_continue_widget.dart';
 import '../widgets/text_custom_paint.dart';
+import 'confirm_OTP.dart';
 
 class RegisterIndex extends StatefulWidget {
   @override
@@ -17,15 +18,15 @@ class RegisterIndex extends StatefulWidget {
 
 class _RegisterIndexState extends State<RegisterIndex> {
   FieldPhoneValidate _fieldPhoneValidate = FieldPhoneValidate('EG');
-  FocusNode _focusNode;
+  FocusNode? _focusNode;
 
   bool _isValid = false;
 
-  ScrollController _scrollController;
+  ScrollController? _scrollController;
 
-  String _phoneNumber;
+  String? _phoneNumber;
 
-  String _code = '+20';
+  String? _code = '+20';
 
   @override
   void initState() {
@@ -33,11 +34,11 @@ class _RegisterIndexState extends State<RegisterIndex> {
     super.initState();
     _scrollController = ScrollController();
     _focusNode = FocusNode();
-    _focusNode.addListener(() async {
-      if (_focusNode.hasFocus) {
+    _focusNode!.addListener(() async {
+      if (_focusNode!.hasFocus) {
         await Future.delayed(Duration(milliseconds: 600));
 
-        scrollToBottom(_scrollController);
+        scrollToBottom(_scrollController!);
       }
     });
   }
@@ -52,9 +53,8 @@ class _RegisterIndexState extends State<RegisterIndex> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      resizeToAvoidBottomPadding: true,
       extendBody: true,
-      appBar: ConstantWidget.appBarGreen,
+      appBar: ConstantWidget.appBarGreen as PreferredSizeWidget?,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -118,7 +118,7 @@ class _RegisterIndexState extends State<RegisterIndex> {
                           onChangedCountry: (value) async {
                             _code = value.dialCode;
                             _fieldPhoneValidate.countryCode = value.code;
-                            _isValid = await checkNumberFromCode(_phoneNumber,
+                            _isValid = await checkNumberFromCode(_phoneNumber!,
                                 _fieldPhoneValidate, _scrollController);
                             if(!mounted)
                               return;
@@ -133,7 +133,7 @@ class _RegisterIndexState extends State<RegisterIndex> {
                             setState(() {});
                           },
                           onTap: () {
-                            scrollToBottom(_scrollController);
+                            scrollToBottom(_scrollController!);
                           },
                         ),
 

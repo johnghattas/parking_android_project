@@ -5,12 +5,12 @@ import '../constant_colors.dart';
 
 class CustomButtonIcon extends StatelessWidget {
   const CustomButtonIcon({
-    Key key, this.title, this.icon, this.onPressed,
+    Key? key, this.title, this.icon, this.onPressed,
   }) : super(key: key);
 
-  final String title;
-  final Icon icon;
-  final Function onPressed;
+  final String? title;
+  final Icon? icon;
+  final Function? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class CustomButtonIcon extends StatelessWidget {
       width: double.infinity,
 
       child: RaisedButton(
-        onPressed: () => onPressed(),
+        onPressed: () => onPressed!(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
           child: Row(

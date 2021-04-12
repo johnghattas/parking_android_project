@@ -8,12 +8,12 @@ import '../shared/screen_sized.dart';
 class DigitalFields extends StatelessWidget {
   final int digits;
 
-  final ValueChanged<String> textChanged;
-  final bool isEnabled;
-  final List code;
+  final ValueChanged<String>? textChanged;
+  final bool? isEnabled;
+  final List? code;
   const DigitalFields({
-    Key key,
-    @required this.digits,
+    Key? key,
+    required this.digits,
     this.textChanged,
     this.isEnabled,
     this.code,
@@ -23,7 +23,7 @@ class DigitalFields extends StatelessWidget {
   Widget build(BuildContext context) {
     if (context.watch<ChangeVerificationState>().status ==
         VerificationState.VERIFIED) {}
-    int value = ((SizeConfig.width - getProportionateScreenWidth(32)) / digits -
+    int value = ((SizeConfig.width! - getProportionateScreenWidth(32)) / digits -
         (getProportionateScreenWidth(90 - 76.0)))
         .floor();
     return Row(
@@ -47,9 +47,9 @@ class DigitalFields extends StatelessWidget {
                 ],
               ),
               child: Center(
-                child: code != null && code[index] != null
+                child: code != null && code![index] != null
                     ? Text(
-                  code[index].toString(),
+                  code![index].toString(),
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: getProportionateScreenWidth(18),

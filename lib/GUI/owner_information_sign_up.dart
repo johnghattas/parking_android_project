@@ -2,20 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:parking_project/GUI/Map_home.dart';
+import 'package:parking_project/GUI/owner_home_page.dart';
 import 'package:parking_project/models/user_model.dart';
 import 'package:parking_project/services/sign_in_app.dart';
 import 'package:parking_project/shared/alerts_class.dart';
 import 'package:parking_project/shared/handling_auth_error_mixin.dart';
-import 'package:parking_project/GUI/owner_home_page.dart';
-import '../shared/screen_sized.dart';
 
+import '../shared/screen_sized.dart';
 import '../widgets/text_custom_paint.dart';
 
 class AdminInformationSignUp extends StatefulWidget {
-  final User user;
+  final User? user;
 
-  const AdminInformationSignUp({Key key, this.user}) : super(key: key);
+  const AdminInformationSignUp({Key? key, this.user}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -31,7 +30,7 @@ class _MyAppState extends State<AdminInformationSignUp>
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
-  SignInServices _signInServices;
+  late SignInServices _signInServices;
 
   Widget build(BuildContext context) {
     handleException(context);
@@ -178,7 +177,7 @@ class _MyAppState extends State<AdminInformationSignUp>
                       child: TextFormField(
                         controller: _confirmPasswordController,
                         validator: (val) =>
-                            val.length < 6 ? 'Password too short.' : null,
+                            val!.length < 6 ? 'Password too short.' : null,
                         cursorColor: Colors.green,
                         obscureText: mark,
                         decoration: InputDecoration(
@@ -217,7 +216,6 @@ class _MyAppState extends State<AdminInformationSignUp>
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(14.0),
                                 child: Text(
                                   'Create Account',
                                   style: TextStyle(
@@ -226,6 +224,7 @@ class _MyAppState extends State<AdminInformationSignUp>
                                     color: Colors.grey[400],
                                   ),
                                 ),
+                                padding: const EdgeInsets.all(14.0),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -253,16 +252,16 @@ class _MyAppState extends State<AdminInformationSignUp>
 
   _signUp() async {
     Client client = Client(
-        id: widget.user.uid,
-        phone: widget.user.phoneNumber,
+        id: widget.user!.uid,
+        phone: widget.user!.phoneNumber,
         isOwner: true,
         lastName: _lastNameController.text,
         firstName: _firstNameController.text);
-    String token;
+    String? token;
 
     try {
-      token = await _signInServices.signUp(
-          client: client, passwordMap: {'password': _passwordController.text});
+      token = await (_signInServices.signUp(
+          client: client, passwordMap: {'password': _passwordController.text}));
     } catch (e) {
       // print(e);
       throw e;

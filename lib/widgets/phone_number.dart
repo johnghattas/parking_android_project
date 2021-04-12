@@ -9,10 +9,10 @@ import '../shared/screen_sized.dart';
 import '../constant_colors.dart';
 
 class PhoneNumberField extends StatefulWidget {
-  final ValueChanged<CountryCode> onCodeChanged;
-  final ValueChanged<String> onPhoneChanged;
+  final ValueChanged<CountryCode>? onCodeChanged;
+  final ValueChanged<String>? onPhoneChanged;
 
-  const PhoneNumberField({Key key, this.onCodeChanged, this.onPhoneChanged}) : super(key: key);
+  const PhoneNumberField({Key? key, this.onCodeChanged, this.onPhoneChanged}) : super(key: key);
   @override
   _PhoneNumberFieldState createState() => _PhoneNumberFieldState();
 }
@@ -24,7 +24,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   // String _countryCode = 'EG';
   bool _isValid = false;
 
-  FieldPhoneValidate _fieldPhoneValidate;
+  late FieldPhoneValidate _fieldPhoneValidate;
   @override
   void initState() {
     // TODO: implement initState
@@ -51,7 +51,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           ),
           initialSelection: "EG",
           onChanged: (CountryCode value) {
-            widget.onCodeChanged(value);
+            widget.onCodeChanged!(value);
             _fieldPhoneValidate.countryCode = value.code;
             setState(() {
               _isValid = false;
@@ -78,7 +78,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
       ),
       inputFormatters: [PhoneFormatter(10)],
       onChanged: (value) async {
-        widget.onPhoneChanged(value);
+        widget.onPhoneChanged!(value);
 
         if ( await _fieldPhoneValidate.correctField(
             value.replaceAll(' ', ''))) {

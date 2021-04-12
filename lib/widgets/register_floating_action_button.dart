@@ -3,12 +3,12 @@ import '../shared/screen_sized.dart';
 import 'package:parking_project/constant_colors.dart';
 class RegFAB extends StatelessWidget {
   const RegFAB({
-    Key key,
-    @required bool isSuccess, this.onPressed,
+    Key? key,
+    required bool isSuccess, this.onPressed,
   }) : _isSuccess = isSuccess, super(key: key);
 
   final bool _isSuccess;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class RegFAB extends StatelessWidget {
       ),
       child: FloatingActionButton(
         backgroundColor: _isSuccess ? kPrimaryColor : const Color(0xffffffff),
-        onPressed: () => _isSuccess? onPressed(): null,
+        onPressed: () => _isSuccess? onPressed!(): null,
         elevation: 0,
         child: Icon(Icons.arrow_forward, color: _isSuccess? Colors.white:kBollColorBD),
       ),
