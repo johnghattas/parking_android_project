@@ -7,12 +7,14 @@ import '../customs/phone_format.dart';
 import '../shared/screen_sized.dart';
 
 import '../constant_colors.dart';
+typedef ValidateFunction = String? Function(String? value);
 
 class PhoneNumberField extends StatefulWidget {
   final ValueChanged<CountryCode>? onCodeChanged;
   final ValueChanged<String>? onPhoneChanged;
+  final ValidateFunction? validator;
 
-  const PhoneNumberField({Key? key, this.onCodeChanged, this.onPhoneChanged}) : super(key: key);
+  const PhoneNumberField({Key? key, this.onCodeChanged, this.onPhoneChanged, this.validator}) : super(key: key);
   @override
   _PhoneNumberFieldState createState() => _PhoneNumberFieldState();
 }
@@ -35,9 +37,9 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   }
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       key: Key('login_phone'),
-
+      validator: widget.validator,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.only(bottom: 0),
         suffixIcon: _isValid

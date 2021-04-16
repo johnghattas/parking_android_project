@@ -32,7 +32,7 @@ dependencies:
   provider: ^5.0.0
 #  adobe_xd: any
   country_code_picker: ^2.0.1
-  phone_number: ^0.9.0
+  phone_number: ^0.9.0+1
   firebase_auth: ^1.0.3
   firebase_core: ^1.0.3
   mockito: ^5.0.3

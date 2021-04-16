@@ -22,7 +22,7 @@ abstract class AuthServices {
 
   Future signUp({
     required Client client,
-    required Map passwordMap
+    required Map addMap
 
   });
 }
@@ -30,9 +30,8 @@ abstract class AuthServices {
 class SignInServices extends AuthServices{
 
   late http.Client _client;
-  BuildContext? _context;
 
-  SignInServices(this._context) {
+  SignInServices() {
     _client = http.Client();
   }
 
@@ -69,18 +68,24 @@ class SignInServices extends AuthServices{
     assert(password != null && password.isNotEmpty);
 
 
-    _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.LOADING);
+    // _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.LOADING);
 
     http.Response response = await _client.post(Uri.parse( '$cUrl/auth/login'), body:{
       'phone': phone,
       'password': password,
+      'is_owner' : isOwner? '1' : '0'
     },headers: {
       'accept': 'application/json'
     });
 
-    _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.NONE);
+    // _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.NONE);
 
-    Map? map=_checkResponse(response);
+    Map? map;
+    try {
+      map=_checkResponse(response);
+    } catch (e) {
+      throw e;
+    }
     print(map);
 
     if ( map  != null) {
@@ -117,48 +122,55 @@ class SignInServices extends AuthServices{
   }
 
   @override
-  Future signUp({required Client client, required Map passwordMap}) async{
+  Future<String> signUp({required Client client, required Map addMap}) async{
 
-    client.checkAsserts();
-    _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.LOADING);
+    print(addMap);
+    // client.checkAsserts();
+    // _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.LOADING);
 
-    http.Response response = await _client.post(Uri(path:'$cUrl/register'), body: client.toMap()..addAll(passwordMap),
+    http.Response response = await http.post(Uri.parse('$cUrl/register'), body: {...client.toMap(), ...addMap},
     headers: {
       'accept': 'application/json'
     });
-    _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.NONE);
+    print('code herer' + response.body);
 
-    Map? map = _checkResponse(response)!;
-    print(map);
+    // _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.NONE);
+
+      Map map;
+    try {
+      map = _checkResponse(response)!;
+    } catch (e) {
+      print('this error -----------');
+
+      throw e;
+    }
+    print('this is the map'+map.toString());
 
 
     if(map.containsKey('message') && map['message'] == 'Server Error') {
-      _context!.read<LoadingAndErrorProvider>().setError("The phone is already existed");
-
-    }if (map != null) {
-
-      return map['token'];
+      // _context!.read<LoadingAndErrorProvider>().setError("The phone is already existed");
+      throw Exception('The phone is already existed');
     }
 
-    return null;
+    return map['token'];
   }
 
   Map? _checkResponse(http.Response response) {
-    if(response.statusCode == 401) {
+    if (response.statusCode == 401) {
       print('un auth');
-      _context!.read<LoadingAndErrorProvider>().setError("un authentication");
-      return null;
+      throw Exception('un authentication');
     }
 
     Map map = jsonDecode(response.body);
     print(map);
 
+    if(response.statusCode == 400){
+      throw Exception(map['error']);
+    }
+    if (map.containsKey('access_token')) {
+      // _context.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.DONE);
 
-    if(map.containsKey('access_token')) {
-      _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.DONE);
-
-    }if(map.containsKey('token')) {
-      _context!.read<LoadingAndErrorProvider>().changeState(LoadingErrorState.DONE);
+    }else if (map.containsKey('token')) {
 
     }
 

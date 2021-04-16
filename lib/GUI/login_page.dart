@@ -23,13 +23,17 @@ import '../widgets/text_custom_paint.dart';
 import 'map_home.dart';
 import 'regester_page_index.dart';
 
+import 'package:parking_project/shared/sign_in_project_servies.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
+class _LoginPageState extends State<LoginPage>  {
+  final LoginServices loginServices = LoginServices();
   late SignInServices _signInServices;
+  final _formKey = GlobalKey<FormState>();
 
   var _passwordController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -42,7 +46,7 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
 
   @override
   Widget build(BuildContext context) {
-    handleException(context);
+    loginServices.handleException(context);
     SizeConfig().init(context);
 
     return WillPopScope(
@@ -60,125 +64,140 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
             height: SizeConfig.height,
             width: SizeConfig.width,
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        height: getProportionateScreenWidth(240),
-                        width: SizeConfig.width,
-                        child: TextAndCustomPaint(),
-                      ),
-                      Positioned(
-                        bottom: -10,
-                        right: 0,
-                        left: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Checkbox(
-                              onChanged: (value) => context
-                                  .read<ChangeVerificationState>()
-                                  .changeAdmin(value),
-                              value: context
-                                  .watch<ChangeVerificationState>()
-                                  .isAdmin,
-                            ),
-                            Text(
-                              'Sign in like owner',
-                              style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  letterSpacing: 0.65),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  VerticalSpacing(of: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
                       children: [
-                        Text(
-                          'Welcome back!',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: getProportionateScreenWidth(26),
-                            color: const Color(0xff303030),
-                            fontWeight: FontWeight.w700,
-                            height: 1.5,
-                          ),
+                        Container(
+                          height: getProportionateScreenWidth(240),
+                          width: SizeConfig.width,
+                          child: TextAndCustomPaint(),
                         ),
-                        VerticalSpacing(of: 20),
-                        PhoneNumberField(
-                          onCodeChanged: (code) => _code = code.dialCode,
-                          onPhoneChanged: (phone) => _phone = phone,
-                        ),
-                        VerticalSpacing(of: 20),
-                        TextField(
-                            key: Key('login_password'),
-                            decoration: InputDecoration(
-                              labelStyle: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: getProportionateScreenWidth(14),
-                                color: kHintText79,
-                                height: 1.3,
+                        Positioned(
+                          bottom: -10,
+                          right: 0,
+                          left: 0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Checkbox(
+                                onChanged: (value) =>
+                                    context
+                                        .read<ChangeVerificationState>()
+                                        .changeAdmin(value),
+                                value: context
+                                    .watch<ChangeVerificationState>()
+                                    .isAdmin,
                               ),
-                              labelText: 'Password',
-                            ),
-                            controller: _passwordController,
-                            obscureText: true,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontSize: 18,
-                            )),
-                        VerticalSpacing(of: 10),
-                        Text(
-                          'Forgot password?',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: getProportionateScreenWidth(14),
-                            color: kTextColor30,
-                            height: 2.9,
-                          ),
-                          // textAlign: TextAlign.right,
-                        ),
-                        VerticalSpacing(of: 30),
-                        Hero(
-                          tag: "heroButtonLogin",
-                          child: CustomButtonIcon(
-                            title: "Login",
-                            key: Key('login_button'),
-                            onPressed: () async => await _logIn(),
-                          ),
-                        ),
-                        VerticalSpacing(of: 40),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => RegisterIndex()));
-                          },
-                          child: Text(
-                            "Or Create My Account",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.w300,
-                              fontSize: getProportionateScreenWidth(14),
-                              color: kBlackLight50,
-                            ),
+                              Text(
+                                'Sign in like owner',
+                                style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    letterSpacing: 0.65),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    VerticalSpacing(of: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome back!',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: getProportionateScreenWidth(26),
+                              color: const Color(0xff303030),
+                              fontWeight: FontWeight.w700,
+                              height: 1.5,
+                            ),
+                          ),
+                          VerticalSpacing(of: 20),
+                          PhoneNumberField(
+                            validator: (value){
+                              if(value == null || value.isEmpty){
+                                return 'Enter the phone';
+                              }
+                            },
+                            onCodeChanged: (code) => _code = code.dialCode,
+                            onPhoneChanged: (phone) => _phone = phone,
+                          ),
+                          VerticalSpacing(of: 20),
+                          TextFormField(
+                              key: Key('login_password'),
+                              validator: (value) {
+                                if(value == null || value.isEmpty){
+                                  return 'Complete this field';
+                                }
+
+                              },
+                              decoration: InputDecoration(
+                                labelStyle: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: getProportionateScreenWidth(14),
+                                  color: kHintText79,
+                                  height: 1.3,
+                                ),
+                                labelText: 'Password',
+                              ),
+                              controller: _passwordController,
+                              obscureText: true,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 18,
+                              )),
+                          VerticalSpacing(of: 10),
+                          Text(
+                            'Forgot password?',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: getProportionateScreenWidth(14),
+                              color: kTextColor30,
+                              height: 2.9,
+                            ),
+                            // textAlign: TextAlign.right,
+                          ),
+                          VerticalSpacing(of: 30),
+                          Hero(
+                            tag: "heroButtonLogin",
+                            child: CustomButtonIcon(
+                              title: "Login",
+                              key: Key('login_button'),
+                              onPressed: () async => await _logIn(),
+                            ),
+                          ),
+                          VerticalSpacing(of: 40),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => RegisterIndex()));
+                            },
+                            child: Text(
+                              "Or Create My Account",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontWeight: FontWeight.w300,
+                                fontSize: getProportionateScreenWidth(14),
+                                color: kBlackLight50,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -191,83 +210,24 @@ class _LoginPageState extends State<LoginPage> with HandlingAuthErrors, Alerts {
   void initState() {
     super.initState();
 
-    _signInServices = SignInServices(context);
+    _signInServices = SignInServices();
   }
 
-  Future<Client?> _addTokenInHive(String token) async {
-    Box userBox = await Hive.openBox('user_data');
-    userBox.put('token', token);
 
-    print(token);
-    Client? client = await (_signInServices.getUser(token));
-
-    if (client != null) {
-      userBox.put('data', client);
-    }
-
-    print('DONE ENTER THE TOKEN');
-    return client;
-  }
 
   _logIn() async {
-    String token;
 
-    print(_code! + _phone.replaceAll(' ', ''));
+    _formKey.currentState!.save();
 
-    try {
-      var time = DateTime.now();
-
-      token = await _signInServices.signIn(
-          phone: _code! + _phone.replaceAll(' ', ''),
-          password: _passwordController.text,
-          isOwner: true);
-
-      print('the time of this sequense is ${DateTime.now().difference(time)}');
-    } catch (e) {
-      print('this is ' + e.toString());
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    if (token == null || token.isEmpty) {
-      return null;
-    }
+    loginServices.logIn(context, phone: _code! + _phone.replaceAll(' ', ''),
+        password: _passwordController.text,
+        isOwner: context
+            .read<ChangeVerificationState>()
+            .isAdmin!);
 
-    print(token.isEmpty);
-
-    Client? client = await (_addTokenInHive(token));
-    if (isLoadingShow) {
-      Navigator.pop(context);
-      isLoadingShow = false;
-    }
-    if (client == null) {
-      print('is null');
-      return;
-    }
-
-    // Navigator.pushAndRemoveUntil(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => MapHome(),
-    //     ),
-    //     (route) => !route.navigator.canPop());
-    if (client.isOwner! && context.read<ChangeVerificationState>().isAdmin!) {
-      //to Admin page
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OwnerHomePage(),
-          ),
-          (router) => router.isFirst);
-    } else {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                create: (context) =>
-                    GarageBloc(ParkingRepo())..add(GetDataEvent()),
-                child: MapHome()),
-          ),
-          (router) => router.isFirst);
-    }
   }
 }

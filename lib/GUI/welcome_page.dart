@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:parking_project/GUI/map_home.dart';
+import 'package:parking_project/GUI/owner_home_page.dart';
+import 'package:parking_project/models/user_model.dart';
 import 'package:provider/provider.dart';
 
 import '../GUI/login_page.dart';
@@ -74,7 +78,8 @@ class _WelcomePageState extends State<WelcomePage> {
                                     children: [
                                       SvgPicture.asset(
                                         'assets/images/car.svg',
-                                        height: getProportionateScreenWidth(100),
+                                        height:
+                                            getProportionateScreenWidth(100),
 
                                         // fit: BoxFit.fitWidth,
                                       ),
@@ -103,8 +108,8 @@ class _WelcomePageState extends State<WelcomePage> {
                                       tag: 'heroButtonLogin',
                                       child: CustomButtonIcon(
                                         title: 'Login with phone',
-                                        onPressed: () =>
-                                            navigateAndStopTimer(value, () async {
+                                        onPressed: () => navigateAndStopTimer(
+                                            value, () async {
                                           await Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (_) => LoginPage()));
@@ -119,11 +124,13 @@ class _WelcomePageState extends State<WelcomePage> {
                                         await Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (_) => RegisterIndex()));
+                                                builder: (_) =>
+                                                    RegisterIndex()));
                                       });
                                     },
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 16.0),
+                                      padding:
+                                          const EdgeInsets.only(left: 16.0),
                                       child: Text(
                                         "Or Create My Account",
                                         textAlign: TextAlign.center,
@@ -176,27 +183,77 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget _titleWelcome() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: RichText(
-        text: TextSpan(children: [
-          TextSpan(
-            text: "Hello, nice to meet you!\n",
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontWeight: FontWeight.w700,
-              fontSize: getProportionateScreenWidth(14),
-              color: Color(0xff303030),
+      child: Row(
+        children: [
+          RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                text: "Hello, nice to meet you!\n",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w700,
+                  fontSize: getProportionateScreenWidth(14),
+                  color: Color(0xff303030),
+                ),
+              ),
+              TextSpan(
+                text: "Get a new experience",
+                style: TextStyle(
+                    fontFamily: "Poppins",
+                    fontWeight: FontWeight.w700,
+                    fontSize: getProportionateScreenWidth(24),
+                    color: Color(0xff303030),
+                    height: 1.4),
+              ),
+            ]),
+          ),
+          Spacer(),
+          InkWell(
+            onTap: () async {
+              Client? user = Hive.box('user_data').get('data');
+              if (user?.isOwner ?? false) {
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    actions: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: kPrimaryColor),
+                        child: Text('Go to Map'),
+                        onPressed: () {
+                          Navigator.pop(context);
+
+                          Navigator.pushReplacementNamed(context, MapHome.NAME);
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: kPrimaryColor),
+                        child: Text('Go to Owner'),
+                        onPressed: () {
+                          Navigator.pop(context);
+
+                          Navigator.pushReplacementNamed(
+                              context, OwnerHomePage.NAME);
+                        },
+                      )
+                    ],
+                    title: Text('where you wold to be'),
+                  ),
+                );
+              } else
+                Navigator.pushReplacementNamed(context, MapHome.NAME);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Text(
+                'Skip',
+                style: TextStyle(
+                    color: kPrimaryColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-          TextSpan(
-            text: "Get a new experience",
-            style: TextStyle(
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.w700,
-                fontSize: getProportionateScreenWidth(24),
-                color: Color(0xff303030),
-                height: 1.4),
-          ),
-        ]),
+        ],
       ),
     );
   }
@@ -211,7 +268,6 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   void dispose() {
-    print('this dispose');
     super.dispose();
   }
 

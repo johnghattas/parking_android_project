@@ -4,10 +4,10 @@ import 'package:parking_project/shared/alerts_class.dart';
 import 'package:provider/provider.dart';
 
 
-mixin HandlingAuthErrors implements Alerts{
+abstract class HandlingAuthErrors implements Alerts{
   bool isLoadingShow = false;
 
-  handleException(BuildContext context) async {
+   handleException(BuildContext context) async {
     var watch = context.watch<LoadingAndErrorProvider>();
 
     print(watch.error);

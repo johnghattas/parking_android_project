@@ -16,6 +16,7 @@ import 'package:parking_project/widgets/test.dart';
 import '../shared/screen_sized.dart';
 
 class MapHome extends StatefulWidget {
+  static const NAME = 'home';
   @override
   _MapHomeState createState() => _MapHomeState();
 }
