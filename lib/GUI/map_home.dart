@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -7,12 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:parking_project/block/garage_bloc.dart';
 import 'package:parking_project/models/garage.dart';
 import 'package:parking_project/shared/constant_widget.dart';
 import 'package:parking_project/widgets/card_garage_item.dart';
 import 'package:parking_project/widgets/test.dart';
-
+import 'package:http/http.dart' as http;
 import '../shared/screen_sized.dart';
 
 class MapHome extends StatefulWidget {
@@ -33,6 +35,8 @@ class Search extends SearchDelegate {
       )
     ];
   }
+
+
 
   @override
   Widget buildLeading(BuildContext context) {
@@ -60,6 +64,10 @@ class _MapHomeState extends State<MapHome> with WidgetsBindingObserver {
   List<Marker> allMarkers = [];
   double lat = 0.0;
   double long = 0.0;
+  int? garageID;
+  int? requestId;
+  int isBool = 0;
+  String button = "Request";
   Completer<GoogleMapController> _controller = Completer();
   PageController _pageController = PageController(viewportFraction: 0.89);
 
@@ -68,6 +76,55 @@ class _MapHomeState extends State<MapHome> with WidgetsBindingObserver {
   bool _isUserSwipe = false;
 
   List<Garage>? garages = [];
+
+  String? token;
+
+
+  Future<void> Request(String token) async {
+    String url = 'https://parkingprojectgp.herokuapp.com/api/request/add';
+    final msg = jsonEncode({"garage_id": garageID});
+
+    http.Response response= await http
+        .post(Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        encoding: Encoding.getByName("utf-8"),
+        body: msg);
+
+    print('response status: ${response.statusCode}');
+    print('response body: ${response.body}');
+    Map map = jsonDecode(response.body);
+
+    print(map['Requestcar']['id']);
+
+
+  }
+
+  void editRequest(String token) async{
+    String url = 'https://parkingprojectgp.herokuapp.com/api/$requestId';
+    final msg = jsonEncode({"garage_id": garageID});
+
+    http.Response response= await http
+        .put(Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        encoding: Encoding.getByName("utf-8"),
+        body: msg);
+
+    print('response status: ${response.statusCode}');
+    print('response body: ${response.body}');
+    Map map = jsonDecode(response.body);
+
+    requestId = map['Requestcar']['id'];
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -295,14 +352,119 @@ class _MapHomeState extends State<MapHome> with WidgetsBindingObserver {
                               builder: (context) {
                                 return ListView(
                                   children: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height,
-                                        )
-                                      ],
+                                    // SlideCountdownClock(
+                                    //   duration: Duration(minutes: 5),
+                                    //   slideDirection: SlideDirection.Down,
+                                    //   separator: ":",
+                                    //   textStyle: TextStyle(
+                                    //       fontSize: 20, color: Colors.red),
+                                    // ),
+                                    Container(
+                                      //height: MediaQuery.of(context).size.height,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 8.0, bottom: 15.0),
+                                        child: Card(
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 7.0),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(bottom: 25.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        'First floor: ',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18),
+                                                      ),
+                                                      Text(
+                                                        'Second floor: ',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18),
+                                                      ),
+                                                      Text(
+                                                        'name: ',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18),
+                                                      ),
+                                                      Text(
+                                                        'address: ',
+                                                        style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 18),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(bottom: 25.0,
+                                                    left: 10.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '5 free spots',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18),
+                                                    ),
+                                                    Text(
+                                                      '10 free spots',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18),
+                                                    ),
+                                                    Text(
+                                                      garages![i].name??'',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18),
+                                                    ),
+                                                    Text(
+                                                      garages![i].city??'' +
+                                                          ',' +
+                                                          (garages![i].street??''),
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 18),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    FlatButton.icon(
+                                      onPressed: () {
+                                        if(isBool == 0 ){
+                                          isBool = 1;button="Request";Request(token??'');
+                                          setState(() {});}
+                                        else if (isBool == 1){
+                                          isBool = 0;button="Cancel Request";editRequest(token??'');
+                                          setState(() {});}
+                                        //Timer.periodic(Duration(seconds: 1), (time) {setState(() {if (counter > 0) {counter--;print(counter);}});});
+                                      },
+                                      icon: Icon(
+                                        Icons.request_page,
+                                        color: Colors.green,
+                                      ),
+                                      label: Text(button),
+                                      shape: RoundedRectangleBorder(
+                                          side: BorderSide(color: Colors.grey),
+                                          borderRadius:
+                                          BorderRadius.circular(18.0)),
+                                      color: Colors.white,
                                     ),
                                   ],
                                 );
@@ -326,6 +488,10 @@ class _MapHomeState extends State<MapHome> with WidgetsBindingObserver {
   void initState() {
     context.read<GarageBloc>().add(GetDataEvent());
     super.initState();
+
+
+    Box box = Hive.box('user_data');
+    token = box.get('token');
   }
 
   // 🚨 Function That Update New Camera Position For Maps 🚨

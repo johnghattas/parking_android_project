@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
           primaryColor: kPrimaryColor,
           visualDensity: VisualDensity.adaptivePlatformDensity,
+
         ),
         routes: {
           MapHome.NAME : (context) => MapHome(),

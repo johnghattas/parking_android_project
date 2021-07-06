@@ -38,7 +38,6 @@ class Garage {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
     data['city'] = this.city;
     data['street'] = this.street;
     data['b_number'] = this.bNumber;
@@ -46,8 +45,8 @@ class Garage {
     data['name'] = this.name;
     data['lat'] = this.lat.toString();
     data['long'] = this.long.toString();
-    data['is_private'] = this.isPrivate!? 1 : 0;
-    data['has_system'] = this.hasSystem!? 1 : 0;
+    data['is_private'] = this.isPrivate!? '1' : '0';
+    data['has_system'] = this.hasSystem!? '1' : '0';
     return data;
   }
 }

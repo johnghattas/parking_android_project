@@ -9,9 +9,14 @@ import 'package:parking_project/providers/loading_and_response_provider.dart';
 import 'package:parking_project/services/sign_in_app.dart';
 import 'package:parking_project/shared/alerts_class.dart';
 import 'package:parking_project/shared/handling_auth_error_mixin.dart';
+import 'package:parking_project/shared/screen_sized.dart';
+import 'package:parking_project/widgets/text_custom_paint.dart';
 import 'package:provider/provider.dart';
 import 'map_home.dart';
 import 'package:parking_project/shared/sign_in_project_servies.dart';
+
+
+
 
 class InformationSignUp extends StatefulWidget {
   final User? user;
@@ -53,43 +58,10 @@ class _MyAppState extends State<InformationSignUp> with HandlingAuthErrors, Aler
             width: width,
             child: Stack(
               children: [
-                ClipPath(
-                  child: Container(
-                      height: 180,
-                      width: width,
-                      decoration: BoxDecoration(color: Colors.green[500]),
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          top: 50.0,
-                        ),
-                        child: Column(
-                          children: [
-                            InkWell(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
-                                    size: 30.0,
-                                  ),
-                                  Text(
-                                    'back',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        ),
-                      )),
-                  clipper: MyClipper(),
+                Container(
+                  height: getProportionateScreenWidth(240),
+                  width: SizeConfig.width,
+                  child: TextAndCustomPaint(title: 'Back',),
                 ),
                 Positioned(
                   top: 70,
