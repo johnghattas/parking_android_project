@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../block/keyboard_change.dart';
+import '../bloc/keyboard_change.dart';
 import '../shared/screen_sized.dart';
 
 class TextWithKeyboardAnimation extends StatelessWidget {

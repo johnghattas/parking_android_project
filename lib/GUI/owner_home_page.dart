@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:parking_project/shared/screen_sized.dart';
+import 'package:parking_project/widgets/custom_drawer.dart';
 
 import '../constant_colors.dart';
 import 'add_data.dart';
-import 'cards page.dart';
+import 'cards_page.dart';
 
 class OwnerHomePage extends StatefulWidget {
   static const NAME = 'owner_home';
@@ -13,6 +15,8 @@ class OwnerHomePage extends StatefulWidget {
 class _OwnerHomePageState extends State<OwnerHomePage> {
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
     return  Scaffold(
       appBar: AppBar(
         // brightness: Brightness.light,
@@ -35,10 +39,8 @@ class _OwnerHomePageState extends State<OwnerHomePage> {
               })
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(16.0),
-        child: FilledData(),
-      ),
+      body: FilledData(),
+      drawer: CustomDrawer(),
     );
   }
 }

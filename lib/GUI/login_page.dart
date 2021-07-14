@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:parking_project/GUI/owner_home_page.dart';
-import 'package:parking_project/block/garage_bloc.dart';
+import 'package:parking_project/bloc/garage_bloc.dart';
 import 'package:parking_project/providers/change_verification_state.dart';
 import 'package:parking_project/repositers/parking_repo.dart';
 import 'package:parking_project/services/sign_in_app.dart';

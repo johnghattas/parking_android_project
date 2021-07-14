@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
-import 'package:parking_project/GUI/map_home.dart';
-import 'package:parking_project/GUI/owner_home_page.dart';
-import 'package:parking_project/models/user_model.dart';
+import '../GUI/map_home.dart';
+import '../GUI/owner_home_page.dart';
+import '../models/user_model.dart';
 import 'package:provider/provider.dart';
 
 import '../GUI/login_page.dart';
@@ -53,7 +53,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: SizeConfig.height! - 24,
+                    height: SizeConfig.height - 24,
                     color: Colors.white,
                   ),
                   ChangeNotifierProvider(
@@ -222,7 +222,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         onPressed: () {
                           Navigator.pop(context);
 
-                          Navigator.pushReplacementNamed(context, MapHome.NAME);
+                          Navigator.pushNamed(context, MapHome.NAME);
                         },
                       ),
                       ElevatedButton(
@@ -231,7 +231,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         onPressed: () {
                           Navigator.pop(context);
 
-                          Navigator.pushReplacementNamed(
+                          Navigator.pushNamed(
                               context, OwnerHomePage.NAME);
                         },
                       )
@@ -240,7 +240,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   ),
                 );
               } else
-                Navigator.pushReplacementNamed(context, MapHome.NAME);
+                Navigator.pushNamed(context, MapHome.NAME);
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 8.0),

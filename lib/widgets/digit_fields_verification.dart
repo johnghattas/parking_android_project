@@ -23,7 +23,7 @@ class DigitalFields extends StatelessWidget {
   Widget build(BuildContext context) {
     if (context.watch<ChangeVerificationState>().status ==
         VerificationState.VERIFIED) {}
-    int value = ((SizeConfig.width! - getProportionateScreenWidth(32)) / digits -
+    int value = ((SizeConfig.width - getProportionateScreenWidth(32)) / digits -
         (getProportionateScreenWidth(90 - 76.0)))
         .floor();
     return Row(

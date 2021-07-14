@@ -7,7 +7,7 @@ import 'package:parking_project/GUI/owner_information_sign_up.dart';
 import 'package:parking_project/shared/alerts_class.dart';
 import 'package:provider/provider.dart';
 
-import '../block/keyboard_change.dart';
+import '../bloc/keyboard_change.dart';
 import '../providers/change_verification_state.dart';
 import '../services/phone_verification.dart';
 import '../shared/constant_widget.dart';
@@ -68,7 +68,7 @@ class _OPTPageState extends State<OPTPage> with Alerts{
                   ),
                 ),
                 Container(
-                  height: SizeConfig.height! - _heightOfVictor() - 45,
+                  height: SizeConfig.height - _heightOfVictor() - 45,
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,

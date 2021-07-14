@@ -29,14 +29,14 @@ class _StackPageViewState extends State<StackPageView> {
     _pageController!.addListener(() {
       setState(() {
         _position = _pageController!.offset;
-        if (_position <= SizeConfig.width!) {
-          _position = getValue(_position, 0, SizeConfig.width!, -500, -80);
-        } else if (_position <= SizeConfig.width! * 2 + 10) {
+        if (_position <= SizeConfig.width) {
+          _position = getValue(_position, 0, SizeConfig.width, -500, -80);
+        } else if (_position <= SizeConfig.width * 2 + 10) {
           _position = getValue(
-              _position, SizeConfig.width!, SizeConfig.width! * 2, -80, -900);
+              _position, SizeConfig.width, SizeConfig.width * 2, -80, -900);
         } else {
           _position = getValue(
-              _position, SizeConfig.width!, SizeConfig.width! * 2, -80, -900);
+              _position, SizeConfig.width, SizeConfig.width * 2, -80, -900);
         }
       });
     });
@@ -59,7 +59,7 @@ class _StackPageViewState extends State<StackPageView> {
     return Stack(
       children: [
         Container(
-            height: getProportionateScreenWidth(SizeConfig.height! * 0.4),
+            height: getProportionateScreenWidth(SizeConfig.height * 0.4),
             width: SizeConfig.width,
             child: CustomPaint(
               painter: CustomPaints(),
@@ -72,14 +72,14 @@ class _StackPageViewState extends State<StackPageView> {
           child: SvgPicture.asset(
             'assets/images/image111.svg',
             height: getProportionateScreenWidth(200),
-            width: SizeConfig.width! * 3,
+            width: SizeConfig.width * 3,
             fit: BoxFit.fitWidth,
           ),
         ),
         Consumer<ChangeIndex>(
           builder: (context, value, child) {
             return Container(
-              height: getProportionateScreenWidth(SizeConfig.height! * 0.4),
+              height: getProportionateScreenWidth(SizeConfig.height * 0.4),
               width: double.infinity,
               child: PageView(
                 controller: _pageController,

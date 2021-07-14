@@ -27,18 +27,3 @@ class ParkingRepo {
   }
 }
 
-//    for (int i = 0; i < body['data'].length; i++) {
-//       AllMarkers.add(
-//         Marker(
-//             onTap: () {
-//               _pageController.animateToPage(i,
-//                   duration: Duration(milliseconds: 20), curve: Curves.easeIn);
-//             },
-//             icon: await BitmapDescriptor.fromAssetImage(
-//                 ImageConfiguration(), 'assets/map/garage3.png'),
-//             markerId: MarkerId('$i'),
-//             position: LatLng(double.parse(body['data'][i]['lat']),
-//                 double.parse(body['data'][i]['long']))),
-//       );
-//     }
-//     setState(() {});
